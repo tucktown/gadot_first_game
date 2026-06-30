@@ -2,6 +2,14 @@
 
 A small 2D deck-building game built with Godot 4.7 and typed GDScript.
 
+## Running the game
+
+Open `project.godot` in Godot 4.7 and press **F6/F5**. Start a run, defeat all
+three encounters, and add one card to your deck after each non-final victory.
+
+The **Main Menu** button safely leaves combat or a reward screen. **Continue
+Run** resumes the most recent stable checkpoint when a save exists.
+
 ## Project layout
 
 - `cards/` - card definitions, runtime card state, and card UI
@@ -37,11 +45,22 @@ run or combat stays in runtime classes rather than changing those definitions.
 - Reuse one modal deck-viewer scene throughout the game
 - Fade smoothly between top-level screens
 
-## Next milestone: save and continue
+## Completed milestone: save and continue
 
 - Autosave health, encounter progress, and card IDs
 - Offer Continue Run from the title screen
+- Return to the Main Menu from combat and reward screens
+- Resume pending rewards or restart the current encounter safely
 - Clear completed or defeated run saves
 - Handle missing or outdated save data safely
 
-After that, the next priorities are sound effects, music, and improved artwork.
+Saves are versioned JSON files stored under Godot's `user://` directory. Card
+IDs are serialized instead of live Resource objects, then resolved through the
+known card catalog when loading.
+
+## Next milestone: audio and visual identity
+
+- Add intentional sound effects for cards, damage, block, and UI actions
+- Add a small music loop with separate volume controls
+- Replace placeholder enemy and card artwork
+- Establish a shared color and typography theme

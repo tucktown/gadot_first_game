@@ -20,6 +20,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var hand_container: HBoxContainer = %Hand
 @onready var end_turn_button: Button = %EndTurnButton
 @onready var view_deck_button: Button = %ViewDeckButton
+@onready var main_menu_button: Button = %MainMenuButton
 @onready var result_overlay: Control = %ResultOverlay
 @onready var result_title: Label = %ResultTitle
 @onready var result_action_button: Button = %ResultActionButton
@@ -64,6 +65,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	enemy_intent_label.text = _get_intent_text(enemy.get_move(state.enemy_turn_index))
 	end_turn_button.disabled = input_locked or state.phase != CombatState.Phase.PLAYER_TURN
 	view_deck_button.disabled = input_locked
+	main_menu_button.disabled = input_locked
 	result_overlay.visible = state.phase in [CombatState.Phase.WON, CombatState.Phase.LOST]
 	if state.phase == CombatState.Phase.WON:
 		result_title.text = "VICTORY"
@@ -150,6 +152,7 @@ func _on_end_turn_button_pressed() -> void:
 		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
 
 	if state.phase == CombatState.Phase.LOST:
+		RunState.clear_saved_run()
 		message_label.text = "%s uses %s. You were defeated." % [
 			enemy.display_name,
 			result.move_name,
@@ -187,6 +190,11 @@ func _on_title_button_pressed() -> void:
 	SceneTransition.transition_to("res://screens/main.tscn")
 
 
+func _on_main_menu_button_pressed() -> void:
+	if not input_locked:
+		SceneTransition.transition_to("res://screens/main.tscn")
+
+
 func _on_view_deck_button_pressed() -> void:
 	if input_locked or get_node_or_null("DeckViewer"):
 		return
@@ -215,6 +223,7 @@ func _set_input_locked(locked: bool) -> void:
 	input_locked = locked
 	end_turn_button.disabled = locked or state.phase != CombatState.Phase.PLAYER_TURN
 	view_deck_button.disabled = locked
+	main_menu_button.disabled = locked
 	for child in hand_container.get_children():
 		if child is CardView:
 			child.set_playable(not locked and state.can_play(child.card))

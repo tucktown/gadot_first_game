@@ -44,6 +44,10 @@ func _on_continue_button_pressed() -> void:
 		SceneTransition.transition_to("res://combat/combat_screen.tscn")
 
 
+func _on_main_menu_button_pressed() -> void:
+	SceneTransition.transition_to("res://screens/main.tscn")
+
+
 func _on_view_deck_button_pressed() -> void:
 	if get_node_or_null("DeckViewer"):
 		return

@@ -4,6 +4,10 @@ extends RefCounted
 const SAVE_PATH := "user://run.json"
 
 
+static func has_run() -> bool:
+	return FileAccess.file_exists(SAVE_PATH)
+
+
 static func save_run(run_data: Dictionary) -> Error:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -20,3 +24,9 @@ static func load_run() -> Dictionary:
 		return {}
 	var parsed: Variant = JSON.parse_string(file.get_as_text())
 	return parsed if parsed is Dictionary else {}
+
+
+static func delete_run() -> Error:
+	if not has_run():
+		return OK
+	return DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))

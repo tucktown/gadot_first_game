@@ -48,6 +48,22 @@ horizontal_alignment = 1
 [node name="Start" type="Button" parent="Center/Menu"]
 custom_minimum_size = Vector2(240, 54)
 layout_mode = 2
-text = "Start Prototype"
+mouse_default_cursor_shape = 2
+text = "Start New Run"
+
+[node name="ContinueButton" type="Button" parent="Center/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Continue Run"
+
+[node name="StatusLabel" type="Label" parent="Center/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
+horizontal_alignment = 1
 
 [connection signal="pressed" from="Center/Menu/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Center/Menu/ContinueButton" to="." method="_on_continue_pressed"]
