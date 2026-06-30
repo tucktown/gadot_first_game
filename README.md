@@ -22,7 +22,7 @@ run or combat stays in runtime classes rather than changing those definitions.
 - Card rewards after victories
 - Victory, defeat, restart, and run-complete states
 
-## Next milestone: combat feedback and animation
+## Completed milestone: combat feedback and animation
 
 - Animate card hover and card play
 - Animate health changes
@@ -31,5 +31,17 @@ run or combat stays in runtime classes rather than changing those definitions.
 - Pace enemy turns so their actions are readable
 - Lock input while actions are resolving
 
-After this milestone, the next priorities are sound, scene transitions, a deck
-viewer, and save/continue support.
+## Completed milestone: deck visibility and navigation
+
+- View the complete run deck during combat, rewards, and the final summary
+- Reuse one modal deck-viewer scene throughout the game
+- Fade smoothly between top-level screens
+
+## Next milestone: save and continue
+
+- Autosave health, encounter progress, and card IDs
+- Offer Continue Run from the title screen
+- Clear completed or defeated run saves
+- Handle missing or outdated save data safely
+
+After that, the next priorities are sound effects, music, and improved artwork.

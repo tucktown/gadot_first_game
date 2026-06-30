@@ -2,6 +2,7 @@ class_name CombatScreen
 extends Control
 
 const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
+const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 
 @onready var player_health_label: Label = %PlayerHealthLabel
 @onready var player_health_bar: ProgressBar = %PlayerHealthBar
@@ -18,6 +19,7 @@ const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
 @onready var message_label: Label = %MessageLabel
 @onready var hand_container: HBoxContainer = %Hand
 @onready var end_turn_button: Button = %EndTurnButton
+@onready var view_deck_button: Button = %ViewDeckButton
 @onready var result_overlay: Control = %ResultOverlay
 @onready var result_title: Label = %ResultTitle
 @onready var result_action_button: Button = %ResultActionButton
@@ -61,6 +63,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	enemy_block_label.text = "Block: %d" % state.enemy_block
 	enemy_intent_label.text = _get_intent_text(enemy.get_move(state.enemy_turn_index))
 	end_turn_button.disabled = input_locked or state.phase != CombatState.Phase.PLAYER_TURN
+	view_deck_button.disabled = input_locked
 	result_overlay.visible = state.phase in [CombatState.Phase.WON, CombatState.Phase.LOST]
 	if state.phase == CombatState.Phase.WON:
 		result_title.text = "VICTORY"
@@ -172,16 +175,23 @@ func _on_result_action_button_pressed() -> void:
 	if state.phase == CombatState.Phase.WON:
 		RunState.complete_combat(state.player_health)
 		if RunState.run_complete:
-			get_tree().change_scene_to_file("res://screens/run_complete.tscn")
+			SceneTransition.transition_to("res://screens/run_complete.tscn")
 		else:
-			get_tree().change_scene_to_file("res://screens/card_reward.tscn")
+			SceneTransition.transition_to("res://screens/card_reward.tscn")
 	elif state.phase == CombatState.Phase.LOST:
 		RunState.start_new_run()
 		_start_combat()
 
 
 func _on_title_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://screens/main.tscn")
+	SceneTransition.transition_to("res://screens/main.tscn")
+
+
+func _on_view_deck_button_pressed() -> void:
+	if input_locked or get_node_or_null("DeckViewer"):
+		return
+	var deck_viewer: DeckViewer = DECK_VIEWER_SCENE.instantiate()
+	add_child(deck_viewer)
 
 
 func _get_intent_text(move: EnemyMoveData) -> String:
@@ -204,6 +214,7 @@ func _find_card_view(card: CardInstance) -> CardView:
 func _set_input_locked(locked: bool) -> void:
 	input_locked = locked
 	end_turn_button.disabled = locked or state.phase != CombatState.Phase.PLAYER_TURN
+	view_deck_button.disabled = locked
 	for child in hand_container.get_children():
 		if child is CardView:
 			child.set_playable(not locked and state.can_play(child.card))

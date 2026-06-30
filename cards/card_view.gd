@@ -33,6 +33,13 @@ func set_playable(is_playable: bool) -> void:
 		_reset_hover()
 
 
+func set_preview_mode() -> void:
+	is_playable = false
+	select_button.disabled = true
+	self_modulate = Color.WHITE
+	_reset_hover()
+
+
 func animate_play_toward(target_global_position: Vector2) -> void:
 	set_playable(false)
 	if hover_tween and hover_tween.is_valid():

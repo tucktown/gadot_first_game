@@ -65,6 +65,12 @@ layout_mode = 2
 text = "Current deck: 5 cards"
 horizontal_alignment = 1
 
+[node name="ViewDeckButton" type="Button" parent="Center/Content"]
+custom_minimum_size = Vector2(240, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "View Current Deck"
+
 [node name="ContinueButton" type="Button" parent="Center/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 50)
@@ -74,3 +80,4 @@ disabled = true
 text = "Continue to Next Combat"
 
 [connection signal="pressed" from="Center/Content/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Center/Content/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]

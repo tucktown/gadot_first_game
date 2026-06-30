@@ -55,6 +55,12 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "Start Another Run"
 
+[node name="ViewDeckButton" type="Button" parent="Center/Content"]
+custom_minimum_size = Vector2(260, 52)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "View Final Deck"
+
 [node name="TitleButton" type="Button" parent="Center/Content"]
 custom_minimum_size = Vector2(260, 52)
 layout_mode = 2
@@ -62,4 +68,5 @@ mouse_default_cursor_shape = 2
 text = "Return to Title"
 
 [connection signal="pressed" from="Center/Content/NewRunButton" to="." method="_on_new_run_button_pressed"]
+[connection signal="pressed" from="Center/Content/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
 [connection signal="pressed" from="Center/Content/TitleButton" to="." method="_on_title_button_pressed"]

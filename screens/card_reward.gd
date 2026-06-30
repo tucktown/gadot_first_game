@@ -1,6 +1,7 @@
 extends Control
 
 const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
+const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 const GUARDED_STRIKE_CARD := preload("res://cards/definitions/guarded_strike.tres")
 const POWER_BLOW_CARD := preload("res://cards/definitions/power_blow.tres")
 const QUICK_GUARD_CARD := preload("res://cards/definitions/quick_guard.tres")
@@ -40,4 +41,11 @@ func _on_reward_selected(card: CardInstance) -> void:
 
 func _on_continue_button_pressed() -> void:
 	if reward_chosen:
-		get_tree().change_scene_to_file("res://combat/combat_screen.tscn")
+		SceneTransition.transition_to("res://combat/combat_screen.tscn")
+
+
+func _on_view_deck_button_pressed() -> void:
+	if get_node_or_null("DeckViewer"):
+		return
+	var deck_viewer: DeckViewer = DECK_VIEWER_SCENE.instantiate()
+	add_child(deck_viewer)

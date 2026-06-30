@@ -74,6 +74,12 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Encounter 1  |  Deck: 5"
 
+[node name="ViewDeckButton" type="Button" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "View Deck"
+
 [node name="EnergyLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -235,5 +241,6 @@ mouse_default_cursor_shape = 2
 text = "Return to Title"
 
 [connection signal="pressed" from="PageMargin/Layout/ActionBar/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="PageMargin/Layout/StatusBar/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
 [connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/ResultActionButton" to="." method="_on_result_action_button_pressed"]
 [connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/TitleButton" to="." method="_on_title_button_pressed"]
