@@ -38,6 +38,7 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="StatusBar" type="HBoxContainer" parent="PageMargin/Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 24
 
@@ -50,6 +51,14 @@ text = "PLAYER"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Health: 50 / 50"
+
+[node name="PlayerHealthBar" type="ProgressBar" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(135, 18)
+layout_mode = 2
+max_value = 50.0
+value = 50.0
+show_percentage = false
 
 [node name="PlayerBlockLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
 unique_name_in_owner = true
@@ -77,6 +86,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="EnemyPanel" type="PanelContainer" parent="PageMargin/Layout/EnemyArea"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 190)
 layout_mode = 2
 
@@ -109,6 +119,14 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Health: 30 / 30"
 horizontal_alignment = 1
+
+[node name="EnemyHealthBar" type="ProgressBar" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 16)
+layout_mode = 2
+max_value = 30.0
+value = 30.0
+show_percentage = false
 
 [node name="EnemyBlockLabel" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
 unique_name_in_owner = true
