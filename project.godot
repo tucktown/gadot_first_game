@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 RunState="*res://systems/run_state.gd"
 SceneTransition="*res://systems/scene_transition.gd"
+AudioManager="*res://systems/audio_manager.gd"
 
 [display]
 

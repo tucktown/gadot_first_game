@@ -84,6 +84,46 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "Continue Run"
 
+[node name="AudioHeading" type="Label" parent="Center/MenuPanel/Margin/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.73, 0.81, 1)
+text = "AUDIO"
+horizontal_alignment = 1
+
+[node name="MusicRow" type="HBoxContainer" parent="Center/MenuPanel/Margin/Menu"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="Center/MenuPanel/Margin/Menu/MusicRow"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="Center/MenuPanel/Margin/Menu/MusicRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 70.0
+
+[node name="SfxRow" type="HBoxContainer" parent="Center/MenuPanel/Margin/Menu"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="Center/MenuPanel/Margin/Menu/SfxRow"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Effects"
+
+[node name="SfxSlider" type="HSlider" parent="Center/MenuPanel/Margin/Menu/SfxRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 80.0
+
 [node name="StatusLabel" type="Label" parent="Center/MenuPanel/Margin/Menu"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(354, 24)
@@ -94,3 +134,5 @@ autowrap_mode = 2
 
 [connection signal="pressed" from="Center/MenuPanel/Margin/Menu/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Center/MenuPanel/Margin/Menu/ContinueButton" to="." method="_on_continue_pressed"]
+[connection signal="value_changed" from="Center/MenuPanel/Margin/Menu/MusicRow/MusicSlider" to="." method="_on_music_slider_value_changed"]
+[connection signal="value_changed" from="Center/MenuPanel/Margin/Menu/SfxRow/SfxSlider" to="." method="_on_sfx_slider_value_changed"]
