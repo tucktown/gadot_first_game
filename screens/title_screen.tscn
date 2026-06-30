@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://screens/main.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/backgrounds/title_road.png" id="2"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+mouse_filter = 2
+
+[node name="Tint" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.015, 0.025, 0.045, 0.34)
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuPanel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Center/MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 38
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 38
+theme_override_constants/margin_bottom = 32
+
+[node name="Menu" type="VBoxContainer" parent="Center/MenuPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/MenuPanel/Margin/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.79, 0.47, 1)
+theme_override_font_sizes/font_size = 48
+text = "FIRST GAME"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/MenuPanel/Margin/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.73, 0.81, 1)
+text = "A deck-building prototype"
+horizontal_alignment = 1
+
+[node name="Start" type="Button" parent="Center/MenuPanel/Margin/Menu"]
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Start New Run"
+
+[node name="ContinueButton" type="Button" parent="Center/MenuPanel/Margin/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Continue Run"
+
+[node name="StatusLabel" type="Label" parent="Center/MenuPanel/Margin/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(354, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[connection signal="pressed" from="Center/MenuPanel/Margin/Menu/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Center/MenuPanel/Margin/Menu/ContinueButton" to="." method="_on_continue_pressed"]

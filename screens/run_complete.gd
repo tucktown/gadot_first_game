@@ -19,7 +19,7 @@ func _on_new_run_button_pressed() -> void:
 
 
 func _on_title_button_pressed() -> void:
-	SceneTransition.transition_to("res://screens/main.tscn")
+	SceneTransition.transition_to("res://screens/title_screen.tscn")
 
 
 func _on_view_deck_button_pressed() -> void:

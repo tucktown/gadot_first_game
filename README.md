@@ -62,6 +62,6 @@ known card catalog when loading.
 
 - Added original illustrated artwork for all six cards and three enemies
 - Connected artwork through the existing card and enemy Resource definitions
+- Added a shared dark-fantasy theme for panels, buttons, progress bars, and text
 - Add intentional sound effects for cards, damage, block, and UI actions
 - Add a small music loop with separate volume controls
-- Establish a shared color and typography theme

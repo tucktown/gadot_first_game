@@ -189,12 +189,12 @@ func _on_result_action_button_pressed() -> void:
 
 
 func _on_title_button_pressed() -> void:
-	SceneTransition.transition_to("res://screens/main.tscn")
+	SceneTransition.transition_to("res://screens/title_screen.tscn")
 
 
 func _on_main_menu_button_pressed() -> void:
 	if not input_locked:
-		SceneTransition.transition_to("res://screens/main.tscn")
+		SceneTransition.transition_to("res://screens/title_screen.tscn")
 
 
 func _on_view_deck_button_pressed() -> void:
