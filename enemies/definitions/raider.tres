@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://enemies/enemy_data.gd" id="1"]
+[ext_resource type="Script" path="res://enemies/enemy_move_data.gd" id="2"]
+[ext_resource type="Resource" path="res://enemies/moves/raider_slash.tres" id="3"]
+[ext_resource type="Resource" path="res://enemies/moves/raider_guard.tres" id="4"]
+
+[resource]
+script = ExtResource("1")
+id = &"raider"
+display_name = "Road Raider"
+max_health = 38
+move_pattern = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4")])

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"guarded_strike"
+display_name = "Guarded Strike"
+description = "Deal 4 damage. Gain 4 block."
+energy_cost = 1
+target = 2
+damage = 4
+block = 4

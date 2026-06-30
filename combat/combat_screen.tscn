@@ -1,0 +1,221 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://combat/combat_screen.gd" id="1"]
+
+[node name="CombatScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.055, 0.071, 0.11, 1)
+mouse_filter = 2
+
+[node name="PageMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="Layout" type="VBoxContainer" parent="PageMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StatusBar" type="HBoxContainer" parent="PageMargin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="PlayerHeading" type="Label" parent="PageMargin/Layout/StatusBar"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "PLAYER"
+
+[node name="PlayerHealthLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Health: 50 / 50"
+
+[node name="PlayerBlockLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Block: 0"
+
+[node name="Spacer" type="Control" parent="PageMargin/Layout/StatusBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EncounterLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Encounter 1  |  Deck: 5"
+
+[node name="EnergyLabel" type="Label" parent="PageMargin/Layout/StatusBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Energy: 3 / 3"
+
+[node name="EnemyArea" type="CenterContainer" parent="PageMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EnemyPanel" type="PanelContainer" parent="PageMargin/Layout/EnemyArea"]
+custom_minimum_size = Vector2(320, 190)
+layout_mode = 2
+
+[node name="EnemyMargin" type="MarginContainer" parent="PageMargin/Layout/EnemyArea/EnemyPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="EnemyDetails" type="VBoxContainer" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin"]
+layout_mode = 2
+alignment = 1
+
+[node name="EnemyNameLabel" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Training Dummy"
+horizontal_alignment = 1
+
+[node name="EnemyArt" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "O"
+horizontal_alignment = 1
+
+[node name="EnemyHealthLabel" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Health: 30 / 30"
+horizontal_alignment = 1
+
+[node name="EnemyBlockLabel" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Block: 0"
+horizontal_alignment = 1
+
+[node name="EnemyIntentLabel" type="Label" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin/EnemyDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
+text = "Intent: Attack for 7"
+horizontal_alignment = 1
+
+[node name="ActionBar" type="HBoxContainer" parent="PageMargin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="MessageLabel" type="Label" parent="PageMargin/Layout/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.84, 0.9, 1)
+text = "Choose a card to play."
+horizontal_alignment = 1
+
+[node name="EndTurnButton" type="Button" parent="PageMargin/Layout/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "End Turn"
+
+[node name="HandHeading" type="Label" parent="PageMargin/Layout"]
+layout_mode = 2
+text = "YOUR HAND"
+horizontal_alignment = 1
+
+[node name="Hand" type="HBoxContainer" parent="PageMargin/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ResultOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dimmer" type="ColorRect" parent="ResultOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Center" type="CenterContainer" parent="ResultOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ResultOverlay/Center"]
+custom_minimum_size = Vector2(380, 220)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ResultOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="ResultOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ResultTitle" type="Label" parent="ResultOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "VICTORY"
+horizontal_alignment = 1
+
+[node name="ResultActionButton" type="Button" parent="ResultOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Choose Card Reward"
+
+[node name="TitleButton" type="Button" parent="ResultOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Return to Title"
+
+[connection signal="pressed" from="PageMargin/Layout/ActionBar/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/ResultActionButton" to="." method="_on_result_action_button_pressed"]
+[connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/TitleButton" to="." method="_on_title_button_pressed"]
