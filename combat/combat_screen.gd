@@ -12,6 +12,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var status_bar: HBoxContainer = %StatusBar
 @onready var enemy_panel: PanelContainer = %EnemyPanel
 @onready var enemy_name_label: Label = %EnemyNameLabel
+@onready var enemy_art: TextureRect = %EnemyArt
 @onready var enemy_health_label: Label = %EnemyHealthLabel
 @onready var enemy_health_bar: ProgressBar = %EnemyHealthBar
 @onready var enemy_block_label: Label = %EnemyBlockLabel
@@ -58,6 +59,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	energy_label.text = "Energy: %d / %d" % [state.energy, state.max_energy]
 	encounter_label.text = "Encounter %d  |  Deck: %d" % [RunState.encounter_number, RunState.deck.size()]
 	enemy_name_label.text = enemy.display_name
+	enemy_art.texture = enemy.artwork
 	enemy_health_label.text = "Health: %d / %d" % [state.enemy_health, state.enemy_max_health]
 	enemy_health_bar.max_value = state.enemy_max_health
 	_set_bar_value(enemy_health_bar, state.enemy_health, animate_health, false)

@@ -60,7 +60,8 @@ known card catalog when loading.
 
 ## Next milestone: audio and visual identity
 
+- Added original illustrated artwork for all six cards and three enemies
+- Connected artwork through the existing card and enemy Resource definitions
 - Add intentional sound effects for cards, damage, block, and UI actions
 - Add a small music loop with separate volume controls
-- Replace placeholder enemy and card artwork
 - Establish a shared color and typography theme

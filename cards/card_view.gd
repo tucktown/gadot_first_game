@@ -5,6 +5,7 @@ signal selected(card: CardInstance)
 
 @onready var name_label: Label = %NameLabel
 @onready var cost_label: Label = %CostLabel
+@onready var artwork: TextureRect = %Artwork
 @onready var description_label: Label = %DescriptionLabel
 @onready var select_button: Button = %SelectButton
 
@@ -22,6 +23,7 @@ func display(card_instance: CardInstance) -> void:
 	card = card_instance
 	name_label.text = card.definition.display_name
 	cost_label.text = str(card.get_energy_cost())
+	artwork.texture = card.definition.artwork
 	description_label.text = card.definition.description
 
 
