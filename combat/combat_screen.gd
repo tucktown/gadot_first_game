@@ -33,10 +33,13 @@ var player_health_tween: Tween
 var enemy_health_tween: Tween
 var end_turn_prompt_tween: Tween
 var end_turn_prompt_active := false
+var player_status_box: HBoxContainer
+var enemy_status_box: HBoxContainer
 
 
 func _ready() -> void:
 	AudioManager.play_game_music()
+	_build_status_boxes()
 	_start_combat()
 
 
@@ -52,6 +55,40 @@ func _start_combat() -> void:
 	message_label.text = "Choose a card to play."
 	input_locked = false
 	_refresh_combat_view(false)
+
+
+func _build_status_boxes() -> void:
+	player_status_box = HBoxContainer.new()
+	player_status_box.add_theme_constant_override("separation", 10)
+	var layout := status_bar.get_parent()
+	layout.add_child(player_status_box)
+	layout.move_child(player_status_box, status_bar.get_index() + 1)
+
+	enemy_status_box = HBoxContainer.new()
+	enemy_status_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	enemy_status_box.add_theme_constant_override("separation", 10)
+	var enemy_details := enemy_panel.get_node("EnemyMargin/EnemyDetails")
+	enemy_details.add_child(enemy_status_box)
+
+
+func _refresh_status_badges(box: HBoxContainer, status: StatusSet) -> void:
+	for child in box.get_children():
+		child.queue_free()
+	for entry in status.describe():
+		var label := Label.new()
+		label.text = "%s %d" % [entry.label, entry.amount]
+		label.add_theme_color_override("font_color", _status_color(entry.kind))
+		box.add_child(label)
+
+
+func _status_color(kind: String) -> Color:
+	match kind:
+		"poison":
+			return Color(0.5, 0.9, 0.5)
+		"buff":
+			return Color(1.0, 0.82, 0.3)
+		_:
+			return Color(1.0, 0.45, 0.4)
 
 
 func _refresh_combat_view(animate_health := true) -> void:
@@ -80,6 +117,8 @@ func _refresh_combat_view(animate_health := true) -> void:
 		result_title.text = "DEFEAT"
 		result_action_button.text = "Start New Run"
 	_refresh_hand()
+	_refresh_status_badges(player_status_box, state.player_status)
+	_refresh_status_badges(enemy_status_box, state.enemy_status)
 
 
 func _refresh_hand() -> void:
@@ -126,6 +165,14 @@ func _on_card_selected(card: CardInstance) -> void:
 		_spawn_floating_value("+%d HP" % result.healed, status_bar, Color(0.4, 0.9, 0.45))
 	if result.block_retention_armed:
 		_spawn_floating_value("FORTIFIED", status_bar, Color(0.45, 0.85, 1.0))
+	if result.vulnerable_applied > 0:
+		_spawn_floating_value("VULN %d" % result.vulnerable_applied, enemy_panel, Color(1.0, 0.45, 0.4))
+	if result.weak_applied > 0:
+		_spawn_floating_value("WEAK %d" % result.weak_applied, enemy_panel, Color(1.0, 0.45, 0.4))
+	if result.poison_applied > 0:
+		_spawn_floating_value("POISON %d" % result.poison_applied, enemy_panel, Color(0.5, 0.9, 0.5))
+	if result.strength_gained > 0:
+		_spawn_floating_value("STR +%d" % result.strength_gained, status_bar, Color(1.0, 0.82, 0.3))
 
 	if state.phase == CombatState.Phase.WON:
 		message_label.text = "%s wins the combat!" % card_name
@@ -172,6 +219,14 @@ func _on_end_turn_button_pressed() -> void:
 		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
 	if result.retained_block > 0:
 		_spawn_floating_value("%d BLOCK RETAINED" % result.retained_block, status_bar, Color(0.45, 0.85, 1.0))
+	if result.enemy_poison_damage > 0:
+		_spawn_floating_value("POISON %d" % result.enemy_poison_damage, enemy_panel, Color(0.5, 0.9, 0.5))
+	if result.player_poison_damage > 0:
+		_spawn_floating_value("POISON %d" % result.player_poison_damage, status_bar, Color(0.5, 0.9, 0.5))
+	if result.weak_applied > 0:
+		_spawn_floating_value("WEAK %d" % result.weak_applied, status_bar, Color(1.0, 0.45, 0.4))
+	if result.vulnerable_applied > 0:
+		_spawn_floating_value("VULN %d" % result.vulnerable_applied, status_bar, Color(1.0, 0.45, 0.4))
 
 	if state.phase == CombatState.Phase.LOST:
 		RunState.clear_saved_run()
@@ -229,11 +284,22 @@ func _on_view_deck_button_pressed() -> void:
 func _get_intent_text(move: EnemyMoveData) -> String:
 	if move == null:
 		return "Intent: Waiting"
-	if move.damage > 0 and move.block > 0:
-		return "Intent: %s - %d damage + %d block" % [move.display_name, move.damage, move.block]
+	var parts: Array[String] = []
 	if move.damage > 0:
-		return "Intent: %s - %d damage" % [move.display_name, move.damage]
-	return "Intent: %s - %d block" % [move.display_name, move.block]
+		parts.append("%d damage" % move.damage)
+	if move.block > 0:
+		parts.append("%d block" % move.block)
+	if move.weak_applied > 0:
+		parts.append("Weak %d" % move.weak_applied)
+	if move.vulnerable_applied > 0:
+		parts.append("Vulnerable %d" % move.vulnerable_applied)
+	if move.poison_applied > 0:
+		parts.append("Poison %d" % move.poison_applied)
+	if move.strength_gained > 0:
+		parts.append("Strength %d" % move.strength_gained)
+	if parts.is_empty():
+		return "Intent: %s" % move.display_name
+	return "Intent: %s - %s" % [move.display_name, " + ".join(parts)]
 
 
 func _find_card_view(card: CardInstance) -> CardView:
