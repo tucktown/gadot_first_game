@@ -43,103 +43,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 40
+theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 16
 
 [node name="Layout" type="VBoxContainer" parent="PageMargin"]
 layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="TopBar" type="HBoxContainer" parent="PageMargin/Layout"]
-layout_mode = 2
-theme_override_constants/separation = 24
-
-[node name="PlayerPanel" type="PanelContainer" parent="PageMargin/Layout/TopBar"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="PlayerMargin" type="MarginContainer" parent="PageMargin/Layout/TopBar/PlayerPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 10
-
-[node name="PlayerDetails" type="VBoxContainer" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="PlayerHeading" type="Label" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "PLAYER"
-
-[node name="StatsRow" type="HBoxContainer" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="PlayerHealthLabel" type="Label" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Health: 50 / 50"
-
-[node name="PlayerHealthBar" type="ProgressBar" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(135, 18)
-layout_mode = 2
-size_flags_vertical = 4
-max_value = 50.0
-value = 50.0
-show_percentage = false
-
-[node name="PlayerBlockLabel" type="Label" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Block: 0"
-
-[node name="PlayerStatuses" type="HBoxContainer" parent="PageMargin/Layout/TopBar/PlayerPanel/PlayerMargin/PlayerDetails"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Spacer" type="Control" parent="PageMargin/Layout/TopBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="RightControls" type="VBoxContainer" parent="PageMargin/Layout/TopBar"]
-layout_mode = 2
 theme_override_constants/separation = 4
-alignment = 1
-
-[node name="EncounterLabel" type="Label" parent="PageMargin/Layout/TopBar/RightControls"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Encounter 1  |  Deck: 5"
-horizontal_alignment = 2
-
-[node name="EnergyLabel" type="Label" parent="PageMargin/Layout/TopBar/RightControls"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "Energy: 3 / 3"
-horizontal_alignment = 2
-
-[node name="ViewDeckButton" type="Button" parent="PageMargin/Layout/TopBar/RightControls"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_default_cursor_shape = 2
-text = "View Deck"
-
-[node name="MainMenuButton" type="Button" parent="PageMargin/Layout/TopBar/RightControls"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(96, 26)
-layout_mode = 2
-mouse_default_cursor_shape = 2
-theme_override_font_sizes/font_size = 12
-text = "Main Menu"
 
 [node name="EnemyArea" type="CenterContainer" parent="PageMargin/Layout"]
 layout_mode = 2
@@ -153,9 +63,9 @@ layout_mode = 2
 [node name="EnemyMargin" type="MarginContainer" parent="PageMargin/Layout/EnemyArea/EnemyPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_bottom = 14
 
 [node name="EnemyDetails" type="VBoxContainer" parent="PageMargin/Layout/EnemyArea/EnemyPanel/EnemyMargin"]
 layout_mode = 2
@@ -259,6 +169,103 @@ layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
+[node name="PlayerPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 0
+offset_left = 32.0
+offset_top = 24.0
+offset_right = 32.0
+offset_bottom = 24.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="PlayerMargin" type="MarginContainer" parent="PlayerPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="PlayerDetails" type="VBoxContainer" parent="PlayerPanel/PlayerMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PlayerHeading" type="Label" parent="PlayerPanel/PlayerMargin/PlayerDetails"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "PLAYER"
+
+[node name="StatsRow" type="HBoxContainer" parent="PlayerPanel/PlayerMargin/PlayerDetails"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PlayerHealthLabel" type="Label" parent="PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Health: 50 / 50"
+
+[node name="PlayerHealthBar" type="ProgressBar" parent="PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(135, 18)
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 50.0
+value = 50.0
+show_percentage = false
+
+[node name="PlayerBlockLabel" type="Label" parent="PlayerPanel/PlayerMargin/PlayerDetails/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Block: 0"
+
+[node name="PlayerStatuses" type="HBoxContainer" parent="PlayerPanel/PlayerMargin/PlayerDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RightControls" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -32.0
+offset_top = 24.0
+offset_right = -32.0
+offset_bottom = 24.0
+grow_horizontal = 0
+grow_vertical = 1
+theme_override_constants/separation = 4
+
+[node name="EncounterLabel" type="Label" parent="RightControls"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Encounter 1  |  Deck: 5"
+horizontal_alignment = 2
+
+[node name="EnergyLabel" type="Label" parent="RightControls"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Energy: 3 / 3"
+horizontal_alignment = 2
+
+[node name="ViewDeckButton" type="Button" parent="RightControls"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "View Deck"
+
+[node name="MainMenuButton" type="Button" parent="RightControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 26)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 12
+text = "Main Menu"
+
 [node name="ResultOverlay" type="Control" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -321,7 +328,7 @@ mouse_default_cursor_shape = 2
 text = "Return to Title"
 
 [connection signal="pressed" from="PageMargin/Layout/ActionBar/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
-[connection signal="pressed" from="PageMargin/Layout/TopBar/RightControls/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
-[connection signal="pressed" from="PageMargin/Layout/TopBar/RightControls/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
+[connection signal="pressed" from="RightControls/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="RightControls/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
 [connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/ResultActionButton" to="." method="_on_result_action_button_pressed"]
 [connection signal="pressed" from="ResultOverlay/Center/Panel/Margin/Content/TitleButton" to="." method="_on_title_button_pressed"]
