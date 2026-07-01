@@ -98,6 +98,8 @@ Foundations (unlock most later design):
 
 - **Status effects** - stacking buffs/debuffs (Vulnerable, Weak, Poison,
   Strength, Dexterity). Biggest depth multiplier. Impact: high. Effort: medium.
+  DONE: Vulnerable, Weak, Strength, and Poison, with the Expose/Sap/Flex/Venom
+  Cut cards and the Road Raider/Iron Guardian debuff moves.
 - **Enemy AI variety and intents** - conditional/weighted move selection and
   clearer intent display. Impact: high. Effort: medium.
 
