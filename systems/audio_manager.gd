@@ -3,6 +3,11 @@ extends Node
 const SETTINGS_PATH := "user://audio_settings.cfg"
 const MUSIC_BUS := &"Music"
 const SFX_BUS := &"SFX"
+const MUSIC_DARK_CAVERN := preload("res://assets/audio/music/dark_cavern_loop.ogg")
+const SFX_UI_CLICK := preload("res://assets/audio/sfx/ui_click.wav")
+const SFX_CARD_PLAY := preload("res://assets/audio/sfx/card_play.wav")
+const SFX_BLOCK := preload("res://assets/audio/sfx/block.wav")
+const SFX_DAMAGE := preload("res://assets/audio/sfx/damage.wav")
 
 var music_player := AudioStreamPlayer.new()
 var sfx_player := AudioStreamPlayer.new()
@@ -17,6 +22,7 @@ func _ready() -> void:
 	sfx_player.bus = SFX_BUS
 	add_child(music_player)
 	add_child(sfx_player)
+	music_player.finished.connect(_on_music_finished)
 	_load_settings()
 	_apply_volumes()
 
@@ -24,6 +30,8 @@ func _ready() -> void:
 func play_music(stream: AudioStream) -> void:
 	if stream == null or music_player.stream == stream and music_player.playing:
 		return
+	if stream is AudioStreamOggVorbis:
+		stream.loop = true
 	music_player.stream = stream
 	music_player.play()
 
@@ -33,6 +41,31 @@ func play_sfx(stream: AudioStream) -> void:
 		return
 	sfx_player.stream = stream
 	sfx_player.play()
+
+
+func play_game_music() -> void:
+	play_music(MUSIC_DARK_CAVERN)
+
+
+func play_ui_click() -> void:
+	play_sfx(SFX_UI_CLICK)
+
+
+func play_card() -> void:
+	play_sfx(SFX_CARD_PLAY)
+
+
+func play_block() -> void:
+	play_sfx(SFX_BLOCK)
+
+
+func play_damage() -> void:
+	play_sfx(SFX_DAMAGE)
+
+
+func _on_music_finished() -> void:
+	if music_player.stream != null:
+		music_player.play()
 
 
 func set_music_volume(value: float) -> void:

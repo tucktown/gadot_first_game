@@ -7,17 +7,20 @@ extends Control
 
 
 func _ready() -> void:
+	AudioManager.play_game_music()
 	continue_button.visible = RunState.has_saved_run()
 	music_slider.value = AudioManager.get_music_volume() * 100.0
 	sfx_slider.value = AudioManager.get_sfx_volume() * 100.0
 
 
 func _on_start_pressed() -> void:
+	AudioManager.play_ui_click()
 	RunState.start_new_run()
 	SceneTransition.transition_to("res://combat/combat_screen.tscn")
 
 
 func _on_continue_pressed() -> void:
+	AudioManager.play_ui_click()
 	if RunState.load_saved_run():
 		SceneTransition.transition_to(RunState.get_resume_scene())
 		return

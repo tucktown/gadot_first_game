@@ -34,6 +34,7 @@ var enemy_health_tween: Tween
 
 
 func _ready() -> void:
+	AudioManager.play_game_music()
 	_start_combat()
 
 
@@ -97,6 +98,7 @@ func _on_card_selected(card: CardInstance) -> void:
 		return
 
 	var card_view := _find_card_view(card)
+	AudioManager.play_card()
 	_set_input_locked(true)
 	var card_name := card.definition.display_name
 	var target := enemy_panel.global_position + enemy_panel.size * 0.5
@@ -107,9 +109,11 @@ func _on_card_selected(card: CardInstance) -> void:
 
 	var result := state.play_card(card)
 	if result.damage_dealt > 0:
+		AudioManager.play_damage()
 		_spawn_floating_value("-%d" % result.damage_dealt, enemy_panel, Color(1.0, 0.35, 0.3))
 		await _animate_hit(enemy_panel)
 	if result.block_gained > 0:
+		AudioManager.play_block()
 		_spawn_floating_value("+%d BLOCK" % result.block_gained, status_bar, Color(0.35, 0.75, 1.0))
 
 	if state.phase == CombatState.Phase.WON:
@@ -146,9 +150,11 @@ func _on_end_turn_button_pressed() -> void:
 		_set_input_locked(false)
 		return
 	if result.damage_taken > 0:
+		AudioManager.play_damage()
 		_spawn_floating_value("-%d" % result.damage_taken, status_bar, Color(1.0, 0.35, 0.3))
 		await _animate_hit(status_bar)
 	elif result.blocked > 0:
+		AudioManager.play_block()
 		_spawn_floating_value("BLOCKED", status_bar, Color(0.35, 0.75, 1.0))
 	if result.enemy_block_gained > 0:
 		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
