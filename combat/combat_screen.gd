@@ -3,6 +3,8 @@ extends Control
 
 const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
 const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
+const INTENT_ATTACK_ICON_PATH := "res://assets/art/ui/intent_attack.png"
+const INTENT_BLOCK_ICON_PATH := "res://assets/art/ui/intent_block.png"
 
 @onready var player_health_label: Label = %PlayerHealthLabel
 @onready var player_health_bar: ProgressBar = %PlayerHealthBar
@@ -18,7 +20,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var enemy_health_label: Label = %EnemyHealthLabel
 @onready var enemy_health_bar: ProgressBar = %EnemyHealthBar
 @onready var enemy_block_label: Label = %EnemyBlockLabel
-@onready var enemy_intent_label: Label = %EnemyIntentLabel
+@onready var enemy_intent: HBoxContainer = %EnemyIntent
 @onready var message_label: Label = %MessageLabel
 @onready var hand_container: HBoxContainer = %Hand
 @onready var end_turn_button: BaseButton = %EndTurnButton
@@ -91,7 +93,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	enemy_health_bar.max_value = state.enemy_max_health
 	_set_bar_value(enemy_health_bar, state.enemy_health, animate_health, false)
 	enemy_block_label.text = "Block: %d" % state.enemy_block
-	enemy_intent_label.text = _get_intent_text(state.planned_move)
+	_refresh_intent(state.planned_move)
 	end_turn_button.disabled = input_locked or state.phase != CombatState.Phase.PLAYER_TURN
 	_update_end_turn_prompt()
 	view_deck_button.disabled = input_locked
@@ -273,9 +275,66 @@ func _on_view_deck_button_pressed() -> void:
 	add_child(deck_viewer)
 
 
-func _get_intent_text(move: EnemyMoveData) -> String:
+func _refresh_intent(move: EnemyMoveData) -> void:
+	for child in enemy_intent.get_children():
+		child.queue_free()
 	if move == null:
-		return "Intent: Waiting"
+		enemy_intent.tooltip_text = ""
+		_add_intent_text_chip("Waiting", Color(0.7, 0.7, 0.7))
+		return
+	if move.damage > 0:
+		var attack_icon := _load_intent_icon(INTENT_ATTACK_ICON_PATH)
+		if attack_icon:
+			_add_intent_icon_chip(attack_icon, str(move.damage))
+		else:
+			_add_intent_text_chip("Atk %d" % move.damage, Color(1.0, 0.55, 0.4))
+	if move.block > 0:
+		var block_icon := _load_intent_icon(INTENT_BLOCK_ICON_PATH)
+		if block_icon:
+			_add_intent_icon_chip(block_icon, str(move.block))
+		else:
+			_add_intent_text_chip("Def %d" % move.block, Color(0.35, 0.75, 1.0))
+	if move.weak_applied > 0:
+		_add_intent_text_chip("Weak %d" % move.weak_applied, _status_color("debuff"))
+	if move.vulnerable_applied > 0:
+		_add_intent_text_chip("Vuln %d" % move.vulnerable_applied, _status_color("debuff"))
+	if move.poison_applied > 0:
+		_add_intent_text_chip("Psn %d" % move.poison_applied, _status_color("poison"))
+	if move.strength_gained > 0:
+		_add_intent_text_chip("Str %d" % move.strength_gained, _status_color("buff"))
+	if enemy_intent.get_child_count() == 0:
+		_add_intent_text_chip(move.display_name, Color(0.7, 0.7, 0.7))
+	enemy_intent.tooltip_text = _intent_tooltip(move)
+
+
+func _load_intent_icon(path: String) -> Texture2D:
+	if ResourceLoader.exists(path):
+		return load(path)
+	return null
+
+
+func _add_intent_icon_chip(icon: Texture2D, value: String) -> void:
+	var chip := HBoxContainer.new()
+	chip.add_theme_constant_override("separation", 2)
+	var texture := TextureRect.new()
+	texture.texture = icon
+	texture.custom_minimum_size = Vector2(22, 22)
+	texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	chip.add_child(texture)
+	var label := Label.new()
+	label.text = value
+	chip.add_child(label)
+	enemy_intent.add_child(chip)
+
+
+func _add_intent_text_chip(text: String, color: Color) -> void:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_color_override("font_color", color)
+	enemy_intent.add_child(label)
+
+
+func _intent_tooltip(move: EnemyMoveData) -> String:
 	var parts: Array[String] = []
 	if move.damage > 0:
 		parts.append("%d damage" % move.damage)
@@ -290,8 +349,8 @@ func _get_intent_text(move: EnemyMoveData) -> String:
 	if move.strength_gained > 0:
 		parts.append("Strength %d" % move.strength_gained)
 	if parts.is_empty():
-		return "Intent: %s" % move.display_name
-	return "Intent: %s - %s" % [move.display_name, " + ".join(parts)]
+		return move.display_name
+	return "%s — %s" % [move.display_name, ", ".join(parts)]
 
 
 func _find_card_view(card: CardInstance) -> CardView:
