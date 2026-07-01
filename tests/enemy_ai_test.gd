@@ -13,6 +13,7 @@ func _run_tests() -> void:
 	_test_player_block_gates_move()
 	_test_weighted_pick_is_deterministic_with_seed()
 	_test_always_fallback_when_none_eligible()
+	_test_end_turn_executes_planned_move_and_replans()
 	if failures == 0:
 		print("Enemy AI tests passed.")
 	call_deferred("_finish")
@@ -76,6 +77,23 @@ func _test_always_fallback_when_none_eligible() -> void:
 	state.enemy_health = 100  # Enrage ineligible; only Guard (ALWAYS) remains
 	var picked := state.choose_enemy_move(state.enemy)
 	_expect(picked != null and picked.display_name == "Guard", "Should fall back to the ALWAYS move.")
+
+
+func _test_end_turn_executes_planned_move_and_replans() -> void:
+	var state := _combat_with_moves([
+		_move("Hit", 8, EnemyMoveData.Condition.ALWAYS, 0.0, 1),
+	])
+	state.phase = CombatState.Phase.PLAYER_TURN
+	state.player_health = 50
+	state.player_max_health = 50
+	state.energy = 3
+	state.max_energy = 3
+	state.plan_enemy_move()
+	var planned := state.planned_move
+	_expect(planned != null, "A move should be planned.")
+	var result := state.end_player_turn(0)
+	_expect(result.attack == 8, "end_player_turn should execute the planned move's damage.")
+	_expect(state.planned_move != null, "A new move should be planned for the next turn.")
 
 
 func _move(name: String, damage: int, condition: EnemyMoveData.Condition, value: float, weight: int) -> EnemyMoveData:

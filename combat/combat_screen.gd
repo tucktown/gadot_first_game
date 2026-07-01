@@ -50,6 +50,8 @@ func _start_combat() -> void:
 		enemy.max_health,
 		RunState.current_health,
 		RunState.max_health,
+		5,
+		enemy,
 	)
 	message_label.text = "Choose a card to play."
 	input_locked = false
@@ -89,7 +91,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	enemy_health_bar.max_value = state.enemy_max_health
 	_set_bar_value(enemy_health_bar, state.enemy_health, animate_health, false)
 	enemy_block_label.text = "Block: %d" % state.enemy_block
-	enemy_intent_label.text = _get_intent_text(enemy.get_move(state.enemy_turn_index))
+	enemy_intent_label.text = _get_intent_text(state.planned_move)
 	end_turn_button.disabled = input_locked or state.phase != CombatState.Phase.PLAYER_TURN
 	_update_end_turn_prompt()
 	view_deck_button.disabled = input_locked
@@ -186,10 +188,10 @@ func _on_end_turn_button_pressed() -> void:
 		return
 
 	_set_input_locked(true)
-	var enemy_move := enemy.get_move(state.enemy_turn_index)
+	var enemy_move := state.planned_move
 	message_label.text = "%s prepares %s..." % [enemy.display_name, enemy_move.display_name]
 	await get_tree().create_timer(0.4).timeout
-	var result := state.end_player_turn(enemy_move)
+	var result := state.end_player_turn()
 	if result.is_empty():
 		_set_input_locked(false)
 		return

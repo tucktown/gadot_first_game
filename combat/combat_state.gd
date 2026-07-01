@@ -34,6 +34,7 @@ func begin(
 	starting_player_health: int = 50,
 	starting_player_max_health: int = 50,
 	opening_hand_size: int = 5,
+	enemy_data: EnemyData = null,
 ) -> void:
 	phase = Phase.PLAYER_TURN
 	player_max_health = starting_player_max_health
@@ -50,6 +51,9 @@ func begin(
 	hand.clear()
 	deck.initialize(card_definitions)
 	draw_cards(opening_hand_size)
+	enemy = enemy_data
+	rng.randomize()
+	plan_enemy_move()
 
 
 func draw_cards(amount: int) -> int:
@@ -169,9 +173,13 @@ func plan_enemy_move() -> void:
 	planned_move = choose_enemy_move(enemy)
 
 
-func end_player_turn(enemy_move: EnemyMoveData, new_hand_size: int = 5) -> Dictionary:
+func end_player_turn(new_hand_size: int = 5) -> Dictionary:
 	if phase != Phase.PLAYER_TURN:
 		return {}
+
+	var enemy_move := planned_move
+	if enemy_move == null:
+		enemy_move = EnemyMoveData.new()
 
 	for card in hand:
 		deck.discard(card)
@@ -244,6 +252,7 @@ func end_player_turn(enemy_move: EnemyMoveData, new_hand_size: int = 5) -> Dicti
 		phase = Phase.LOST
 		return result
 
+	plan_enemy_move()
 	phase = Phase.PLAYER_TURN
 	energy = max_energy
 	draw_cards(new_hand_size)

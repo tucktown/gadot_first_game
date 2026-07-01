@@ -6,9 +6,3 @@ extends Resource
 @export_range(1, 9999) var max_health: int = 20
 @export var moves: Array[EnemyMoveData] = []
 @export var artwork: Texture2D
-
-
-func get_move(turn_index: int) -> EnemyMoveData:
-	if moves.is_empty():
-		return null
-	return moves[turn_index % moves.size()]
