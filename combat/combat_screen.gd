@@ -191,7 +191,8 @@ func _on_end_turn_button_pressed() -> void:
 
 	_set_input_locked(true)
 	var enemy_move := state.planned_move
-	message_label.text = "%s prepares %s..." % [enemy.display_name, enemy_move.display_name]
+	var move_name := enemy_move.display_name if enemy_move != null else "..."
+	message_label.text = "%s prepares %s..." % [enemy.display_name, move_name]
 	await get_tree().create_timer(0.4).timeout
 	var result := state.end_player_turn()
 	if result.is_empty():

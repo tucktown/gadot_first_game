@@ -158,6 +158,8 @@ func choose_enemy_move(target: EnemyData) -> EnemyMoveData:
 	var total_weight := 0
 	for move in eligible:
 		total_weight += move.weight
+	if total_weight <= 0:
+		return eligible[0]
 	var roll := rng.randi_range(1, total_weight)
 	var accumulated := 0
 	for move in eligible:
