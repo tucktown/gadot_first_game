@@ -86,3 +86,44 @@ Blow, free Quick Guard, and Fortify, which carries unspent block into the next t
 It also holds Second Wind (energy over the cap), Devour (heavy lifesteal), Mend
 (flat healing), Bulwark (a retained wall of block), and Rally (attack, draw, and
 refund). Each reward now offers three cards drawn at random from that pool.
+
+## Roadmap: roguelike depth and replayability
+
+Candidate milestones, roughly ordered by how much later work depends on them.
+Impact is depth/dynamism added; effort is build size against the current
+data-driven combat. The near-term goal is a **branching map** to drive content
+and replayability, sequenced after the combat foundations it relies on.
+
+Foundations (unlock most later design):
+
+- **Status effects** - stacking buffs/debuffs (Vulnerable, Weak, Poison,
+  Strength, Dexterity). Biggest depth multiplier. Impact: high. Effort: medium.
+- **Enemy AI variety and intents** - conditional/weighted move selection and
+  clearer intent display. Impact: high. Effort: medium.
+
+Run loop (the branching-map goal):
+
+- **Branching map** - node graph (combat / elite / rest / shop / event / boss)
+  replacing the fixed three encounters. Impact: high. Effort: large.
+- **Gold and shop** - currency earned in combat, spent on cards, relics, and
+  card removal; a shop map node. Impact: medium. Effort: medium.
+- **Relics** - persistent run-modifying artifacts with combat/run hooks.
+  Impact: high. Effort: medium.
+
+Deck sculpting:
+
+- **Card upgrades and removal** - rest sites that heal or upgrade a card, plus
+  removal to thin the deck. Impact: high. Effort: medium.
+- **Card keywords** - Exhaust, Retain, Innate, X-cost. Impact: medium.
+  Effort: medium.
+
+Content and replay:
+
+- **Potions / consumables** - one-shot combat items. Impact: low. Effort: small.
+- **Elites and a boss** - unique tougher encounters (needs status effects and
+  enemy AI). Impact: medium. Effort: medium.
+- **Ascension / difficulty tiers** - post-victory replay hook. Impact: low.
+  Effort: small.
+
+Recommended sequence: status effects, then relics, then the branching map (with
+gold and shop as node types), then upgrades and removal, then more content.
