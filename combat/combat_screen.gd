@@ -236,17 +236,22 @@ func _on_end_turn_button_pressed() -> void:
 		]
 	else:
 		var effects: Array[String] = []
+		if result.enemy_poison_damage > 0:
+			effects.append("%d poison damage to the enemy" % result.enemy_poison_damage)
 		if result.attack > 0:
 			effects.append("%d damage taken, %d blocked" % [result.damage_taken, result.blocked])
 		if result.enemy_block_gained > 0:
 			effects.append("%d block gained" % result.enemy_block_gained)
 		if result.retained_block > 0:
 			effects.append("%d player block retained" % result.retained_block)
-		message_label.text = "%s uses %s: %s." % [
-			enemy.display_name,
-			result.move_name,
-			", ".join(effects),
-		]
+		if effects.is_empty():
+			message_label.text = "%s uses %s." % [enemy.display_name, result.move_name]
+		else:
+			message_label.text = "%s uses %s: %s." % [
+				enemy.display_name,
+				result.move_name,
+				", ".join(effects),
+			]
 
 	await get_tree().create_timer(0.25).timeout
 	_set_input_locked(false)
