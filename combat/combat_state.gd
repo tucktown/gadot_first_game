@@ -23,6 +23,9 @@ var hand: Array[CardInstance] = []
 var deck := Deck.new()
 var player_status: StatusSet = StatusSet.new()
 var enemy_status: StatusSet = StatusSet.new()
+var enemy: EnemyData
+var planned_move: EnemyMoveData
+var rng := RandomNumberGenerator.new()
 
 
 func begin(
@@ -123,6 +126,47 @@ func _attack_damage(base: int, attacker: StatusSet, defender: StatusSet) -> int:
 	var weakened := floori(raw * attacker.outgoing_multiplier())
 	var result := floori(weakened * defender.incoming_multiplier())
 	return maxi(0, result)
+
+
+func _move_eligible(move: EnemyMoveData) -> bool:
+	match move.condition:
+		EnemyMoveData.Condition.ENEMY_HP_BELOW:
+			var fraction := float(enemy_health) / float(maxi(1, enemy_max_health))
+			return fraction < move.condition_value
+		EnemyMoveData.Condition.PLAYER_BLOCK_BELOW:
+			return float(player_block) < move.condition_value
+		_:
+			return true
+
+
+func choose_enemy_move(target: EnemyData) -> EnemyMoveData:
+	if target == null or target.moves.is_empty():
+		return null
+	var eligible: Array[EnemyMoveData] = []
+	for move in target.moves:
+		if _move_eligible(move):
+			eligible.append(move)
+	if eligible.is_empty():
+		for move in target.moves:
+			if move.condition == EnemyMoveData.Condition.ALWAYS:
+				return move
+		return target.moves[0]
+	var total_weight := 0
+	for move in eligible:
+		total_weight += move.weight
+	var roll := rng.randi_range(1, total_weight)
+	var accumulated := 0
+	for move in eligible:
+		accumulated += move.weight
+		if roll <= accumulated:
+			return move
+	return eligible[eligible.size() - 1]
+
+
+func plan_enemy_move() -> void:
+	if enemy == null:
+		return
+	planned_move = choose_enemy_move(enemy)
 
 
 func end_player_turn(enemy_move: EnemyMoveData, new_hand_size: int = 5) -> Dictionary:
