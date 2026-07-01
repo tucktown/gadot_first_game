@@ -21,6 +21,8 @@ var enemy_turn_index: int = 0
 var retain_block_this_turn := false
 var hand: Array[CardInstance] = []
 var deck := Deck.new()
+var player_status: StatusSet = StatusSet.new()
+var enemy_status: StatusSet = StatusSet.new()
 
 
 func begin(
@@ -40,6 +42,8 @@ func begin(
 	enemy_block = 0
 	enemy_turn_index = 0
 	retain_block_this_turn = false
+	player_status.stacks.clear()
+	enemy_status.stacks.clear()
 	hand.clear()
 	deck.initialize(card_definitions)
 	draw_cards(opening_hand_size)
@@ -66,11 +70,17 @@ func play_card(card: CardInstance) -> Dictionary:
 
 	energy -= card.get_energy_cost()
 	player_block += card.definition.block
-	var damage_blocked := mini(enemy_block, card.definition.damage)
-	var damage_dealt := maxi(0, card.definition.damage - enemy_block)
-	enemy_block = maxi(0, enemy_block - card.definition.damage)
+	var raw_damage := _attack_damage(card.definition.damage, player_status, enemy_status)
+	var damage_blocked := mini(enemy_block, raw_damage)
+	var damage_dealt := maxi(0, raw_damage - enemy_block)
+	enemy_block = maxi(0, enemy_block - raw_damage)
 	enemy_health = maxi(0, enemy_health - damage_dealt)
 	hand.erase(card)
+
+	enemy_status.add(StatusSet.Type.VULNERABLE, card.definition.vulnerable_applied)
+	enemy_status.add(StatusSet.Type.WEAK, card.definition.weak_applied)
+	enemy_status.add(StatusSet.Type.POISON, card.definition.poison_applied)
+	player_status.add(StatusSet.Type.STRENGTH, card.definition.strength_gained)
 
 	var heal_amount := card.definition.heal
 	if card.definition.heals_for_damage_dealt:
@@ -99,7 +109,20 @@ func play_card(card: CardInstance) -> Dictionary:
 		"energy_gained": energy_gained,
 		"healed": healed,
 		"block_retention_armed": card.definition.retains_block,
+		"vulnerable_applied": card.definition.vulnerable_applied,
+		"weak_applied": card.definition.weak_applied,
+		"poison_applied": card.definition.poison_applied,
+		"strength_gained": card.definition.strength_gained,
 	}
+
+
+func _attack_damage(base: int, attacker: StatusSet, defender: StatusSet) -> int:
+	if base <= 0:
+		return 0
+	var raw := base + attacker.attack_bonus()
+	var weakened := floori(raw * attacker.outgoing_multiplier())
+	var result := floori(weakened * defender.incoming_multiplier())
+	return maxi(0, result)
 
 
 func end_player_turn(enemy_move: EnemyMoveData, new_hand_size: int = 5) -> Dictionary:

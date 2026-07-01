@@ -23,6 +23,10 @@ enum Target {
 @export_range(0, 999) var heal: int = 0
 @export var heals_for_damage_dealt: bool = false
 @export var energy_uncapped: bool = false
+@export_range(0, 99) var vulnerable_applied: int = 0
+@export_range(0, 99) var weak_applied: int = 0
+@export_range(0, 99) var poison_applied: int = 0
+@export_range(0, 99) var strength_gained: int = 0
 
 @export_category("Presentation")
 @export var artwork: Texture2D

@@ -14,6 +14,11 @@ func _run_tests() -> void:
 	_test_lifesteal_heals_for_damage_dealt()
 	_test_uncapped_energy_exceeds_maximum()
 	_test_status_set_basics()
+	_test_strength_adds_flat_damage()
+	_test_vulnerable_increases_damage_taken()
+	_test_weak_reduces_damage_dealt()
+	_test_combined_status_damage_formula()
+	_test_card_applies_statuses_to_enemy()
 	if failures == 0:
 		print("Combat state tests passed.")
 	call_deferred("_finish")
@@ -123,6 +128,59 @@ func _test_status_set_basics() -> void:
 
 	var badges := s.describe()
 	_expect(badges.size() == 2, "Only remaining statuses (Strength, Poison) should describe.")
+
+
+func _test_strength_adds_flat_damage() -> void:
+	var state := _fresh_state()
+	state.player_status.add(StatusSet.Type.STRENGTH, 3)
+	var strike := _card(&"strike")
+	strike.damage = 6
+	state.hand.append(CardInstance.new(strike))
+	var result := state.play_card(state.hand[0])
+	_expect(result.damage_dealt == 9, "Strength should add flat damage to attacks.")
+
+
+func _test_vulnerable_increases_damage_taken() -> void:
+	var state := _fresh_state()
+	state.enemy_status.add(StatusSet.Type.VULNERABLE, 1)
+	var strike := _card(&"strike")
+	strike.damage = 6
+	state.hand.append(CardInstance.new(strike))
+	var result := state.play_card(state.hand[0])
+	_expect(result.damage_dealt == 7, "Vulnerable should raise damage: floor(6*1.25)=7.")
+
+
+func _test_weak_reduces_damage_dealt() -> void:
+	var state := _fresh_state()
+	state.player_status.add(StatusSet.Type.WEAK, 1)
+	var strike := _card(&"strike")
+	strike.damage = 6
+	state.hand.append(CardInstance.new(strike))
+	var result := state.play_card(state.hand[0])
+	_expect(result.damage_dealt == 4, "Weak should reduce damage: floor(6*0.75)=4.")
+
+
+func _test_combined_status_damage_formula() -> void:
+	var state := _fresh_state()
+	state.player_status.add(StatusSet.Type.STRENGTH, 2)
+	state.player_status.add(StatusSet.Type.WEAK, 1)
+	state.enemy_status.add(StatusSet.Type.VULNERABLE, 1)
+	var strike := _card(&"strike")
+	strike.damage = 6
+	state.hand.append(CardInstance.new(strike))
+	var result := state.play_card(state.hand[0])
+	_expect(result.damage_dealt == 7, "Combined: floor(floor((6+2)*0.75)*1.25)=7.")
+
+
+func _test_card_applies_statuses_to_enemy() -> void:
+	var state := _fresh_state()
+	var hex := _card(&"hex")
+	hex.vulnerable_applied = 2
+	hex.poison_applied = 3
+	state.hand.append(CardInstance.new(hex))
+	state.play_card(state.hand[0])
+	_expect(state.enemy_status.amount(StatusSet.Type.VULNERABLE) == 2, "Card should apply Vulnerable to the enemy.")
+	_expect(state.enemy_status.amount(StatusSet.Type.POISON) == 3, "Card should apply Poison to the enemy.")
 
 
 func _fresh_state() -> CombatState:
