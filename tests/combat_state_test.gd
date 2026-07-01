@@ -24,6 +24,7 @@ func _run_tests() -> void:
 	_test_duration_status_expires_at_turn_end()
 	_test_enemy_move_applies_weak_to_player()
 	_test_starter_cards_registered()
+	_test_enemy_patterns_include_status_moves()
 	if failures == 0:
 		print("Combat state tests passed.")
 	call_deferred("_finish")
@@ -228,6 +229,19 @@ func _test_enemy_move_applies_weak_to_player() -> void:
 func _test_starter_cards_registered() -> void:
 	for id in [&"expose", &"sap", &"flex", &"venom_cut"]:
 		_expect(RunState.CARD_CATALOG.has(id), "Starter card %s should be in the catalog." % id)
+
+
+func _test_enemy_patterns_include_status_moves() -> void:
+	var raider_has_weak := false
+	for move in RunState.RAIDER.move_pattern:
+		if move.weak_applied > 0:
+			raider_has_weak = true
+	_expect(raider_has_weak, "Raider should have a move that applies Weak.")
+	var guardian_has_vuln := false
+	for move in RunState.GUARDIAN.move_pattern:
+		if move.vulnerable_applied > 0:
+			guardian_has_vuln = true
+	_expect(guardian_has_vuln, "Guardian should have a move that applies Vulnerable.")
 
 
 func _fresh_state() -> CombatState:
