@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://enemies/enemy_data.gd" id="1"]
 [ext_resource type="Script" path="res://enemies/enemy_move_data.gd" id="2"]
 [ext_resource type="Resource" path="res://enemies/moves/crawler_bite.tres" id="3"]
 [ext_resource type="Resource" path="res://enemies/moves/crawler_spit.tres" id="4"]
 [ext_resource type="Resource" path="res://enemies/moves/crawler_writhe.tres" id="5"]
+[ext_resource type="Texture2D" path="res://assets/art/enemies/plague_crawler.png" id="6"]
 
 [resource]
 script = ExtResource("1")
@@ -12,3 +13,4 @@ id = &"plague_crawler"
 display_name = "Plague Crawler"
 max_health = 34
 moves = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5")])
+artwork = ExtResource("6")

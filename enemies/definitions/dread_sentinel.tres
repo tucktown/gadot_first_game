@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://enemies/enemy_data.gd" id="1"]
 [ext_resource type="Script" path="res://enemies/enemy_move_data.gd" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Resource" path="res://enemies/moves/sentinel_bulwark.tres" id="4"]
 [ext_resource type="Resource" path="res://enemies/moves/sentinel_break.tres" id="5"]
 [ext_resource type="Resource" path="res://enemies/moves/sentinel_enrage.tres" id="6"]
+[ext_resource type="Texture2D" path="res://assets/art/enemies/dread_sentinel.png" id="7"]
 
 [resource]
 script = ExtResource("1")
@@ -13,3 +14,4 @@ id = &"dread_sentinel"
 display_name = "Dread Sentinel"
 max_health = 70
 moves = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")])
+artwork = ExtResource("7")
