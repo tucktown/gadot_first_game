@@ -13,5 +13,5 @@ script = ExtResource("1")
 id = &"guardian"
 display_name = "Iron Guardian"
 max_health = 52
-move_pattern = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("4"), ExtResource("7")])
+moves = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("4"), ExtResource("7")])
 artwork = ExtResource("6")

@@ -10,5 +10,5 @@ script = ExtResource("1")
 id = &"training_dummy"
 display_name = "Training Dummy"
 max_health = 30
-move_pattern = Array[ExtResource("2")]([ExtResource("3")])
+moves = Array[ExtResource("2")]([ExtResource("3")])
 artwork = ExtResource("4")

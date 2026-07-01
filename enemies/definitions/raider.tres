@@ -12,5 +12,5 @@ script = ExtResource("1")
 id = &"raider"
 display_name = "Road Raider"
 max_health = 38
-move_pattern = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("6")])
+moves = Array[ExtResource("2")]([ExtResource("3"), ExtResource("4"), ExtResource("6")])
 artwork = ExtResource("5")

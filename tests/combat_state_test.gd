@@ -233,12 +233,12 @@ func _test_starter_cards_registered() -> void:
 
 func _test_enemy_patterns_include_status_moves() -> void:
 	var raider_has_weak := false
-	for move in RunState.RAIDER.move_pattern:
+	for move in RunState.RAIDER.moves:
 		if move.weak_applied > 0:
 			raider_has_weak = true
 	_expect(raider_has_weak, "Raider should have a move that applies Weak.")
 	var guardian_has_vuln := false
-	for move in RunState.GUARDIAN.move_pattern:
+	for move in RunState.GUARDIAN.moves:
 		if move.vulnerable_applied > 0:
 			guardian_has_vuln = true
 	_expect(guardian_has_vuln, "Guardian should have a move that applies Vulnerable.")
