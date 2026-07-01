@@ -23,6 +23,7 @@ func _run_tests() -> void:
 	_test_player_poison_ignores_block()
 	_test_duration_status_expires_at_turn_end()
 	_test_enemy_move_applies_weak_to_player()
+	_test_starter_cards_registered()
 	if failures == 0:
 		print("Combat state tests passed.")
 	call_deferred("_finish")
@@ -222,6 +223,11 @@ func _test_enemy_move_applies_weak_to_player() -> void:
 	move.weak_applied = 2
 	state.end_player_turn(move, 0)
 	_expect(state.player_status.amount(StatusSet.Type.WEAK) == 2, "Enemy move should apply Weak to the player.")
+
+
+func _test_starter_cards_registered() -> void:
+	for id in [&"expose", &"sap", &"flex", &"venom_cut"]:
+		_expect(RunState.CARD_CATALOG.has(id), "Starter card %s should be in the catalog." % id)
 
 
 func _fresh_state() -> CombatState:

@@ -13,6 +13,10 @@ const DEVOUR_CARD := preload("res://cards/definitions/devour.tres")
 const MEND_CARD := preload("res://cards/definitions/mend.tres")
 const BULWARK_CARD := preload("res://cards/definitions/bulwark.tres")
 const RALLY_CARD := preload("res://cards/definitions/rally.tres")
+const EXPOSE_CARD := preload("res://cards/definitions/expose.tres")
+const SAP_CARD := preload("res://cards/definitions/sap.tres")
+const FLEX_CARD := preload("res://cards/definitions/flex.tres")
+const VENOM_CUT_CARD := preload("res://cards/definitions/venom_cut.tres")
 const TRAINING_DUMMY := preload("res://enemies/definitions/training_dummy.tres")
 const RAIDER := preload("res://enemies/definitions/raider.tres")
 const GUARDIAN := preload("res://enemies/definitions/guardian.tres")
@@ -30,6 +34,10 @@ const CARD_CATALOG := {
 	&"mend": MEND_CARD,
 	&"bulwark": BULWARK_CARD,
 	&"rally": RALLY_CARD,
+	&"expose": EXPOSE_CARD,
+	&"sap": SAP_CARD,
+	&"flex": FLEX_CARD,
+	&"venom_cut": VENOM_CUT_CARD,
 }
 
 var max_health: int = 50

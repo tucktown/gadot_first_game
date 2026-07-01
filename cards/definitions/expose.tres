@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/expose.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"expose"
+display_name = "Expose"
+description = "Apply 2 Vulnerable to the enemy."
+energy_cost = 1
+target = 2
+vulnerable_applied = 2
+artwork = ExtResource("2")

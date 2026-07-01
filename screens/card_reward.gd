@@ -13,6 +13,10 @@ const REWARD_POOL: Array[CardData] = [
 	preload("res://cards/definitions/mend.tres"),
 	preload("res://cards/definitions/bulwark.tres"),
 	preload("res://cards/definitions/rally.tres"),
+	preload("res://cards/definitions/expose.tres"),
+	preload("res://cards/definitions/sap.tres"),
+	preload("res://cards/definitions/flex.tres"),
+	preload("res://cards/definitions/venom_cut.tres"),
 ]
 
 @onready var reward_container: HBoxContainer = %RewardContainer
