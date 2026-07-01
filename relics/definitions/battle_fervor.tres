@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://relics/relic_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"battle_fervor"
+display_name = "Battle Fervor"
+description = "Start each combat with 1 Strength."
+effect = 2
+magnitude = 1

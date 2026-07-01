@@ -16,6 +16,9 @@ func _run_tests() -> void:
 	_test_turn_start_energy_relic()
 	_test_turn_start_draw_relic()
 	_test_relics_stack()
+	_test_relic_catalog_complete()
+	_test_relic_save_load_round_trip()
+	_test_unknown_relic_id_invalidates_save()
 	if failures == 0:
 		print("Relic tests passed.")
 	_restore_save()
@@ -70,6 +73,58 @@ func _test_relics_stack() -> void:
 	])
 	_expect(state.player_block == 6, "Stacked relics: block applied.")
 	_expect(state.player_status.amount(StatusSet.Type.STRENGTH) == 2, "Stacked relics: strength applied.")
+
+
+func _test_relic_catalog_complete() -> void:
+	for id in [&"stone_heart", &"battle_fervor", &"everflow_battery", &"scrying_lens"]:
+		_expect(RunState.RELIC_CATALOG.has(id), "RELIC_CATALOG should contain %s." % id)
+	_expect(RunState.SAVE_VERSION == 3, "SAVE_VERSION should be 3.")
+
+
+func _test_relic_save_load_round_trip() -> void:
+	# NOTE: bare `RunState.foo()` doesn't resolve here — this test script `extends SceneTree`,
+	# not Node, so GDScript can't do its usual autoload-lookup-via-get_node for instance
+	# members/methods (constants like RunState.EVERFLOW_BATTERY still resolve fine, since those
+	# are read straight off the script's class, no instance needed). Fetch the live singleton
+	# through the scene tree instead.
+	var run_state := _run_state()
+	run_state.start_new_run()
+	# `relics` on RunState is `Array[RelicData]`; going through `run_state` (typed `Node` here,
+	# for the get_node-workaround reason above) makes the assignment dynamic, so the RHS must
+	# already carry the matching typed-array shape rather than a bare untyped `[...]` literal.
+	var relics_with_battery: Array[RelicData] = [RunState.EVERFLOW_BATTERY]
+	run_state.relics = relics_with_battery
+	run_state.save_run()
+	var empty_relics: Array[RelicData] = []
+	run_state.relics = empty_relics  # clobber in memory
+	var ok: bool = run_state.load_saved_run()
+	_expect(ok, "Saved run with a relic should load.")
+	_expect(run_state.relics.size() == 1 and run_state.relics[0] == RunState.EVERFLOW_BATTERY,
+		"Relic should round-trip by id through the catalog.")
+
+
+func _test_unknown_relic_id_invalidates_save() -> void:
+	var run_state := _run_state()
+	run_state.start_new_run()
+	var data := {
+		"version": RunState.SAVE_VERSION,
+		"current_health": 40,
+		"encounter_number": 1,
+		"awaiting_reward": false,
+		"awaiting_relic": false,
+		"deck": ["strike", "strike", "defend", "defend", "heavy_strike"],
+		"relics": ["not_a_real_relic"],
+	}
+	SaveManager.save_run(data)
+	var ok: bool = run_state.load_saved_run()
+	_expect(not ok, "An unknown relic id must invalidate the save.")
+	_expect(not SaveManager.has_run(), "Invalid save should be cleared.")
+
+
+func _run_state() -> Node:
+	# The RunState autoload, fetched through the tree since this SceneTree script has no
+	# Node `self` for GDScript's normal autoload-name-to-get_node sugar to hook into.
+	return root.get_node("RunState")
 
 
 func _relic(trigger: RelicData.Trigger, effect: RelicData.Effect, magnitude: int) -> RelicData:

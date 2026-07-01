@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const STRIKE_CARD := preload("res://cards/definitions/strike.tres")
 const DEFEND_CARD := preload("res://cards/definitions/defend.tres")
 const HEAVY_STRIKE_CARD := preload("res://cards/definitions/heavy_strike.tres")
@@ -25,6 +25,16 @@ const PLAGUE_CRAWLER := preload("res://enemies/definitions/plague_crawler.tres")
 const BONE_ACOLYTE := preload("res://enemies/definitions/bone_acolyte.tres")
 const DREAD_SENTINEL := preload("res://enemies/definitions/dread_sentinel.tres")
 const GRAVEMAW := preload("res://enemies/definitions/gravemaw.tres")
+const STONE_HEART := preload("res://relics/definitions/stone_heart.tres")
+const BATTLE_FERVOR := preload("res://relics/definitions/battle_fervor.tres")
+const EVERFLOW_BATTERY := preload("res://relics/definitions/everflow_battery.tres")
+const SCRYING_LENS := preload("res://relics/definitions/scrying_lens.tres")
+const RELIC_CATALOG := {
+	&"stone_heart": STONE_HEART,
+	&"battle_fervor": BATTLE_FERVOR,
+	&"everflow_battery": EVERFLOW_BATTERY,
+	&"scrying_lens": SCRYING_LENS,
+}
 const ENCOUNTERS: Array[EnemyData] = [CINDER_HOUND, PLAGUE_CRAWLER, DREAD_SENTINEL, BONE_ACOLYTE, GRAVEMAW]
 const CARD_CATALOG := {
 	&"strike": STRIKE_CARD,
@@ -51,6 +61,8 @@ var encounter_number: int = 1
 var deck: Array[CardData] = []
 var run_complete := false
 var awaiting_reward := false
+var relics: Array[RelicData] = []
+var awaiting_relic := false
 
 
 func start_new_run() -> void:
@@ -58,6 +70,8 @@ func start_new_run() -> void:
 	encounter_number = 1
 	run_complete = false
 	awaiting_reward = false
+	awaiting_relic = false
+	relics = []
 	deck = [
 		STRIKE_CARD,
 		STRIKE_CARD,
@@ -90,6 +104,12 @@ func add_card(card: CardData) -> void:
 	save_run()
 
 
+func add_relic(relic: RelicData) -> void:
+	relics.append(relic)
+	awaiting_relic = false
+	save_run()
+
+
 func get_current_enemy() -> EnemyData:
 	var index := clampi(encounter_number - 1, 0, ENCOUNTERS.size() - 1)
 	return ENCOUNTERS[index]
@@ -112,12 +132,18 @@ func save_run() -> bool:
 	for card in deck:
 		card_ids.append(String(card.id))
 
+	var relic_ids: Array[String] = []
+	for relic in relics:
+		relic_ids.append(String(relic.id))
+
 	var save_data := {
 		"version": SAVE_VERSION,
 		"current_health": current_health,
 		"encounter_number": encounter_number,
 		"awaiting_reward": awaiting_reward,
+		"awaiting_relic": awaiting_relic,
 		"deck": card_ids,
+		"relics": relic_ids,
 	}
 	var error := SaveManager.save_run(save_data)
 	if error != OK:
@@ -145,6 +171,18 @@ func load_saved_run() -> bool:
 			return false
 		loaded_deck.append(CARD_CATALOG[card_id])
 
+	var saved_relic_ids: Variant = save_data.get("relics", [])
+	if not saved_relic_ids is Array:
+		clear_saved_run()
+		return false
+	var loaded_relics: Array[RelicData] = []
+	for saved_relic_id in saved_relic_ids:
+		var relic_id := StringName(str(saved_relic_id))
+		if not RELIC_CATALOG.has(relic_id):
+			clear_saved_run()
+			return false
+		loaded_relics.append(RELIC_CATALOG[relic_id])
+
 	var saved_health := int(save_data.get("current_health", 0))
 	var saved_encounter := int(save_data.get("encounter_number", 0))
 	if saved_health <= 0 or saved_encounter < 1 or saved_encounter > ENCOUNTERS.size():
@@ -155,6 +193,8 @@ func load_saved_run() -> bool:
 	encounter_number = saved_encounter
 	awaiting_reward = bool(save_data.get("awaiting_reward", false))
 	deck = loaded_deck
+	relics = loaded_relics
+	awaiting_relic = bool(save_data.get("awaiting_relic", false))
 	run_complete = false
 	return true
 

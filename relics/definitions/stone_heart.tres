@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://relics/relic_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"stone_heart"
+display_name = "Stone Heart"
+description = "Start each combat with 6 Block."
+magnitude = 6
