@@ -1,7 +1,5 @@
 extends SceneTree
 
-var RelicData = preload("res://relics/relic_data.gd")
-
 var failures := 0
 var _save_backup: Variant = null  # bytes of user://run.json, or null if none
 
