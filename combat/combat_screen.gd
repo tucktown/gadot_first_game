@@ -9,7 +9,9 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var player_block_label: Label = %PlayerBlockLabel
 @onready var energy_label: Label = %EnergyLabel
 @onready var encounter_label: Label = %EncounterLabel
-@onready var status_bar: HBoxContainer = %StatusBar
+@onready var player_panel: PanelContainer = %PlayerPanel
+@onready var player_statuses: HBoxContainer = %PlayerStatuses
+@onready var enemy_statuses: HBoxContainer = %EnemyStatuses
 @onready var enemy_panel: PanelContainer = %EnemyPanel
 @onready var enemy_name_label: Label = %EnemyNameLabel
 @onready var enemy_art: TextureRect = %EnemyArt
@@ -33,13 +35,10 @@ var player_health_tween: Tween
 var enemy_health_tween: Tween
 var end_turn_prompt_tween: Tween
 var end_turn_prompt_active := false
-var player_status_box: HBoxContainer
-var enemy_status_box: HBoxContainer
 
 
 func _ready() -> void:
 	AudioManager.play_game_music()
-	_build_status_boxes()
 	_start_combat()
 
 
@@ -55,20 +54,6 @@ func _start_combat() -> void:
 	message_label.text = "Choose a card to play."
 	input_locked = false
 	_refresh_combat_view(false)
-
-
-func _build_status_boxes() -> void:
-	player_status_box = HBoxContainer.new()
-	player_status_box.add_theme_constant_override("separation", 10)
-	var layout := status_bar.get_parent()
-	layout.add_child(player_status_box)
-	layout.move_child(player_status_box, status_bar.get_index() + 1)
-
-	enemy_status_box = HBoxContainer.new()
-	enemy_status_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	enemy_status_box.add_theme_constant_override("separation", 10)
-	var enemy_details := enemy_panel.get_node("EnemyMargin/EnemyDetails")
-	enemy_details.add_child(enemy_status_box)
 
 
 func _refresh_status_badges(box: HBoxContainer, status: StatusSet) -> void:
@@ -117,8 +102,8 @@ func _refresh_combat_view(animate_health := true) -> void:
 		result_title.text = "DEFEAT"
 		result_action_button.text = "Start New Run"
 	_refresh_hand()
-	_refresh_status_badges(player_status_box, state.player_status)
-	_refresh_status_badges(enemy_status_box, state.enemy_status)
+	_refresh_status_badges(player_statuses, state.player_status)
+	_refresh_status_badges(enemy_statuses, state.enemy_status)
 
 
 func _refresh_hand() -> void:
@@ -145,7 +130,7 @@ func _on_card_selected(card: CardInstance) -> void:
 	var card_name := card.definition.display_name
 	var target := enemy_panel.global_position + enemy_panel.size * 0.5
 	if card.definition.damage == 0:
-		target = status_bar.global_position + status_bar.size * 0.25
+		target = player_panel.global_position + player_panel.size * 0.25
 	if card_view:
 		await card_view.animate_play_toward(target)
 
@@ -156,15 +141,15 @@ func _on_card_selected(card: CardInstance) -> void:
 		await _animate_hit(enemy_panel)
 	if result.block_gained > 0:
 		AudioManager.play_block()
-		_spawn_floating_value("+%d BLOCK" % result.block_gained, status_bar, Color(0.35, 0.75, 1.0))
+		_spawn_floating_value("+%d BLOCK" % result.block_gained, player_panel, Color(0.35, 0.75, 1.0))
 	if result.cards_drawn > 0:
 		_spawn_floating_value("+%d CARD" % result.cards_drawn, hand_container, Color(0.72, 0.58, 1.0))
 	if result.energy_gained > 0:
-		_spawn_floating_value("+%d ENERGY" % result.energy_gained, status_bar, Color(1.0, 0.82, 0.3))
+		_spawn_floating_value("+%d ENERGY" % result.energy_gained, player_panel, Color(1.0, 0.82, 0.3))
 	if result.healed > 0:
-		_spawn_floating_value("+%d HP" % result.healed, status_bar, Color(0.4, 0.9, 0.45))
+		_spawn_floating_value("+%d HP" % result.healed, player_panel, Color(0.4, 0.9, 0.45))
 	if result.block_retention_armed:
-		_spawn_floating_value("FORTIFIED", status_bar, Color(0.45, 0.85, 1.0))
+		_spawn_floating_value("FORTIFIED", player_panel, Color(0.45, 0.85, 1.0))
 	if result.vulnerable_applied > 0:
 		_spawn_floating_value("VULN %d" % result.vulnerable_applied, enemy_panel, Color(1.0, 0.45, 0.4))
 	if result.weak_applied > 0:
@@ -172,7 +157,7 @@ func _on_card_selected(card: CardInstance) -> void:
 	if result.poison_applied > 0:
 		_spawn_floating_value("POISON %d" % result.poison_applied, enemy_panel, Color(0.5, 0.9, 0.5))
 	if result.strength_gained > 0:
-		_spawn_floating_value("STR +%d" % result.strength_gained, status_bar, Color(1.0, 0.82, 0.3))
+		_spawn_floating_value("STR +%d" % result.strength_gained, player_panel, Color(1.0, 0.82, 0.3))
 
 	if state.phase == CombatState.Phase.WON:
 		message_label.text = "%s wins the combat!" % card_name
@@ -210,23 +195,23 @@ func _on_end_turn_button_pressed() -> void:
 		return
 	if result.damage_taken > 0:
 		AudioManager.play_damage()
-		_spawn_floating_value("-%d" % result.damage_taken, status_bar, Color(1.0, 0.35, 0.3))
-		await _animate_hit(status_bar)
+		_spawn_floating_value("-%d" % result.damage_taken, player_panel, Color(1.0, 0.35, 0.3))
+		await _animate_hit(player_panel)
 	elif result.blocked > 0:
 		AudioManager.play_block()
-		_spawn_floating_value("BLOCKED", status_bar, Color(0.35, 0.75, 1.0))
+		_spawn_floating_value("BLOCKED", player_panel, Color(0.35, 0.75, 1.0))
 	if result.enemy_block_gained > 0:
 		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
 	if result.retained_block > 0:
-		_spawn_floating_value("%d BLOCK RETAINED" % result.retained_block, status_bar, Color(0.45, 0.85, 1.0))
+		_spawn_floating_value("%d BLOCK RETAINED" % result.retained_block, player_panel, Color(0.45, 0.85, 1.0))
 	if result.enemy_poison_damage > 0:
 		_spawn_floating_value("POISON %d" % result.enemy_poison_damage, enemy_panel, Color(0.5, 0.9, 0.5))
 	if result.player_poison_damage > 0:
-		_spawn_floating_value("POISON %d" % result.player_poison_damage, status_bar, Color(0.5, 0.9, 0.5))
+		_spawn_floating_value("POISON %d" % result.player_poison_damage, player_panel, Color(0.5, 0.9, 0.5))
 	if result.weak_applied > 0:
-		_spawn_floating_value("WEAK %d" % result.weak_applied, status_bar, Color(1.0, 0.45, 0.4))
+		_spawn_floating_value("WEAK %d" % result.weak_applied, player_panel, Color(1.0, 0.45, 0.4))
 	if result.vulnerable_applied > 0:
-		_spawn_floating_value("VULN %d" % result.vulnerable_applied, status_bar, Color(1.0, 0.45, 0.4))
+		_spawn_floating_value("VULN %d" % result.vulnerable_applied, player_panel, Color(1.0, 0.45, 0.4))
 
 	if state.phase == CombatState.Phase.LOST:
 		RunState.clear_saved_run()
