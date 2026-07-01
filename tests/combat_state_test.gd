@@ -13,6 +13,7 @@ func _run_tests() -> void:
 	_test_heal_effect_and_cap()
 	_test_lifesteal_heals_for_damage_dealt()
 	_test_uncapped_energy_exceeds_maximum()
+	_test_status_set_basics()
 	if failures == 0:
 		print("Combat state tests passed.")
 	call_deferred("_finish")
@@ -100,6 +101,28 @@ func _test_uncapped_energy_exceeds_maximum() -> void:
 	var result := state.play_card(state.hand[0])
 	_expect(result.energy_gained == 2, "Second Wind should grant full energy even at the cap.")
 	_expect(state.energy == 5, "Uncapped energy should exceed the normal maximum.")
+
+
+func _test_status_set_basics() -> void:
+	var s := StatusSet.new()
+	s.add(StatusSet.Type.STRENGTH, 2)
+	_expect(s.attack_bonus() == 2, "Strength should report as attack bonus.")
+	s.add(StatusSet.Type.WEAK, 1)
+	_expect(is_equal_approx(s.outgoing_multiplier(), 0.75), "Weak should reduce outgoing damage.")
+	s.add(StatusSet.Type.VULNERABLE, 1)
+	_expect(is_equal_approx(s.incoming_multiplier(), 1.25), "Vulnerable should raise incoming damage.")
+
+	s.add(StatusSet.Type.POISON, 3)
+	var ticked := s.tick_turn_start()
+	_expect(ticked == 3, "Poison tick should return current poison.")
+	_expect(s.amount(StatusSet.Type.POISON) == 2, "Poison should decrement after ticking.")
+
+	s.tick_turn_end()
+	_expect(s.amount(StatusSet.Type.VULNERABLE) == 0, "Vulnerable should decrement at turn end.")
+	_expect(s.amount(StatusSet.Type.WEAK) == 0, "Weak should decrement at turn end.")
+
+	var badges := s.describe()
+	_expect(badges.size() == 2, "Only remaining statuses (Strength, Poison) should describe.")
 
 
 func _fresh_state() -> CombatState:
