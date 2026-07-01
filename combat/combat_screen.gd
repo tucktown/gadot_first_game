@@ -19,7 +19,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var enemy_intent_label: Label = %EnemyIntentLabel
 @onready var message_label: Label = %MessageLabel
 @onready var hand_container: HBoxContainer = %Hand
-@onready var end_turn_button: Button = %EndTurnButton
+@onready var end_turn_button: BaseButton = %EndTurnButton
 @onready var view_deck_button: Button = %ViewDeckButton
 @onready var main_menu_button: Button = %MainMenuButton
 @onready var result_overlay: Control = %ResultOverlay
@@ -31,6 +31,8 @@ var enemy: EnemyData
 var input_locked := false
 var player_health_tween: Tween
 var enemy_health_tween: Tween
+var end_turn_prompt_tween: Tween
+var end_turn_prompt_active := false
 
 
 func _ready() -> void:
@@ -67,6 +69,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	enemy_block_label.text = "Block: %d" % state.enemy_block
 	enemy_intent_label.text = _get_intent_text(enemy.get_move(state.enemy_turn_index))
 	end_turn_button.disabled = input_locked or state.phase != CombatState.Phase.PLAYER_TURN
+	_update_end_turn_prompt()
 	view_deck_button.disabled = input_locked
 	main_menu_button.disabled = input_locked
 	result_overlay.visible = state.phase in [CombatState.Phase.WON, CombatState.Phase.LOST]
@@ -232,9 +235,43 @@ func _set_input_locked(locked: bool) -> void:
 	end_turn_button.disabled = locked or state.phase != CombatState.Phase.PLAYER_TURN
 	view_deck_button.disabled = locked
 	main_menu_button.disabled = locked
+	_update_end_turn_prompt()
 	for child in hand_container.get_children():
 		if child is CardView:
 			child.set_playable(not locked and state.can_play(child.card))
+
+
+func _update_end_turn_prompt() -> void:
+	var should_prompt := (
+		state.phase == CombatState.Phase.PLAYER_TURN
+		and state.energy == 0
+		and not input_locked
+	)
+	if should_prompt == end_turn_prompt_active:
+		return
+	end_turn_prompt_active = should_prompt
+	if end_turn_prompt_tween and end_turn_prompt_tween.is_valid():
+		end_turn_prompt_tween.kill()
+	end_turn_button.scale = Vector2.ONE
+	end_turn_button.self_modulate = Color.WHITE
+	if not should_prompt:
+		return
+	end_turn_prompt_tween = create_tween().set_loops(2)
+	end_turn_prompt_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	end_turn_prompt_tween.tween_property(end_turn_button, "scale", Vector2(1.06, 1.06), 0.55)
+	end_turn_prompt_tween.parallel().tween_property(
+		end_turn_button,
+		"self_modulate",
+		Color(1.25, 1.12, 0.82, 1.0),
+		0.55,
+	)
+	end_turn_prompt_tween.tween_property(end_turn_button, "scale", Vector2.ONE, 0.55)
+	end_turn_prompt_tween.parallel().tween_property(
+		end_turn_button,
+		"self_modulate",
+		Color.WHITE,
+		0.55,
+	)
 
 
 func _set_bar_value(bar: ProgressBar, target_value: float, animated: bool, is_player: bool) -> void:

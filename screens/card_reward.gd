@@ -31,12 +31,13 @@ func _on_reward_selected(card: CardInstance) -> void:
 		return
 
 	reward_chosen = true
+	AudioManager.play_card()
 	RunState.add_card(card.definition)
 	message_label.text = "%s was added to your deck." % card.definition.display_name
 	deck_size_label.text = "Current deck: %d cards" % RunState.deck.size()
 	continue_button.disabled = false
 	for card_view in reward_container.get_children():
-		card_view.set_playable(false)
+		card_view.show_reward_result(card_view.card == card)
 
 
 func _on_continue_button_pressed() -> void:

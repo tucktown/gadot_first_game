@@ -58,10 +58,24 @@ Saves are versioned JSON files stored under Godot's `user://` directory. Card
 IDs are serialized instead of live Resource objects, then resolved through the
 known card catalog when loading.
 
-## Next milestone: audio and visual identity
+## Completed milestone: audio and visual identity
 
-- Added original illustrated artwork for all six cards and three enemies
-- Connected artwork through the existing card and enemy Resource definitions
-- Added a shared dark-fantasy theme for panels, buttons, progress bars, and text
-- Added sound effects for cards, damage, block, and UI actions
-- Added a looping ambient track with separate music and effects volume controls
+- Original illustrated artwork for all six cards and three enemies
+- Illustrated title and combat backgrounds
+- Shared dark-fantasy theme for panels, buttons, progress bars, and text
+- Themed title, combat, and card-reward screens
+- Distinct selected and de-emphasized reward-card states
+- Illustrated End Turn control with a two-pulse zero-energy prompt
+- Sound effects for cards, damage, block, and UI actions
+- Looping ambient music with saved music and effects volume controls
+
+Audio is routed through separate Music and SFX buses managed by the
+`AudioManager` autoload. Third-party CC0 audio provenance is recorded in
+`assets/audio/SOURCES.md`.
+
+## Next milestone: gameplay depth and polish
+
+- Add more card effects and meaningful deck-building choices
+- Expand enemy behavior and encounter variety
+- Balance health, damage, rewards, and encounter pacing
+- Continue refining screen transitions and moment-to-moment feedback

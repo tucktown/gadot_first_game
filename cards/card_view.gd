@@ -42,6 +42,29 @@ func set_preview_mode() -> void:
 	_reset_hover()
 
 
+func show_reward_result(is_selected: bool) -> void:
+	is_playable = false
+	select_button.disabled = true
+	if hover_tween and hover_tween.is_valid():
+		hover_tween.kill()
+	var target_scale := Vector2(1.1, 1.1) if is_selected else Vector2(0.94, 0.94)
+	var target_color := Color.WHITE if is_selected else Color(0.32, 0.34, 0.4, 0.72)
+	z_index = 20 if is_selected else 0
+	if is_selected:
+		var selected_style := StyleBoxFlat.new()
+		selected_style.bg_color = Color(0.09, 0.105, 0.14, 1.0)
+		selected_style.border_color = Color(0.95, 0.55, 0.22, 1.0)
+		selected_style.set_border_width_all(3)
+		selected_style.set_corner_radius_all(7)
+		selected_style.shadow_color = Color(1.0, 0.35, 0.08, 0.32)
+		selected_style.shadow_size = 10
+		add_theme_stylebox_override("panel", selected_style)
+	hover_tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	hover_tween.set_parallel(true)
+	hover_tween.tween_property(self, "scale", target_scale, 0.22)
+	hover_tween.tween_property(self, "self_modulate", target_color, 0.22)
+
+
 func animate_play_toward(target_global_position: Vector2) -> void:
 	set_playable(false)
 	if hover_tween and hover_tween.is_valid():

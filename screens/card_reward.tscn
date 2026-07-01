@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://screens/card_reward.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/backgrounds/title_road.png" id="2"]
 
 [node name="CardReward" type="Control"]
 layout_mode = 3
@@ -11,14 +12,26 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.055, 0.071, 0.11, 1)
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+mouse_filter = 2
+
+[node name="Tint" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.015, 0.025, 0.045, 0.58)
 mouse_filter = 2
 
 [node name="Center" type="CenterContainer" parent="."]
@@ -29,62 +42,82 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Content" type="VBoxContainer" parent="Center"]
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(680, 0)
 layout_mode = 2
-theme_override_constants/separation = 20
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 24
+
+[node name="Content" type="VBoxContainer" parent="Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Title" type="Label" parent="Center/Content"]
+[node name="Title" type="Label" parent="Center/Panel/Margin/Content"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(0.96, 0.79, 0.47, 1)
+theme_override_font_sizes/font_size = 36
 text = "CHOOSE A CARD"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="Center/Content"]
+[node name="Subtitle" type="Label" parent="Center/Panel/Margin/Content"]
 layout_mode = 2
-text = "Add one card to your deck."
+theme_override_colors/font_color = Color(0.68, 0.73, 0.81, 1)
+text = "Claim one reward for the road ahead."
 horizontal_alignment = 1
 
-[node name="RewardContainer" type="HBoxContainer" parent="Center/Content"]
+[node name="RewardContainer" type="HBoxContainer" parent="Center/Panel/Margin/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 250)
+custom_minimum_size = Vector2(0, 230)
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 30
 alignment = 1
 
-[node name="MessageLabel" type="Label" parent="Center/Content"]
+[node name="MessageLabel" type="Label" parent="Center/Panel/Margin/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 28)
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.68, 0.4, 1)
 text = "Select one reward."
 horizontal_alignment = 1
 
-[node name="DeckSizeLabel" type="Label" parent="Center/Content"]
+[node name="DeckSizeLabel" type="Label" parent="Center/Panel/Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.73, 0.81, 1)
 text = "Current deck: 5 cards"
 horizontal_alignment = 1
 
-[node name="ViewDeckButton" type="Button" parent="Center/Content"]
-custom_minimum_size = Vector2(240, 46)
+[node name="Actions" type="HBoxContainer" parent="Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="ViewDeckButton" type="Button" parent="Center/Panel/Margin/Content/Actions"]
+custom_minimum_size = Vector2(170, 42)
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "View Current Deck"
+text = "View Deck"
 
-[node name="ContinueButton" type="Button" parent="Center/Content"]
+[node name="ContinueButton" type="Button" parent="Center/Panel/Margin/Content/Actions"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 50)
+custom_minimum_size = Vector2(220, 42)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 disabled = true
-text = "Continue to Next Combat"
+text = "Continue to Combat"
 
-[node name="MainMenuButton" type="Button" parent="Center/Content"]
-custom_minimum_size = Vector2(240, 46)
+[node name="MainMenuButton" type="Button" parent="Center/Panel/Margin/Content/Actions"]
+custom_minimum_size = Vector2(150, 42)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "Main Menu"
 
-[connection signal="pressed" from="Center/Content/ContinueButton" to="." method="_on_continue_button_pressed"]
-[connection signal="pressed" from="Center/Content/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
-[connection signal="pressed" from="Center/Content/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
+[connection signal="pressed" from="Center/Panel/Margin/Content/Actions/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Center/Panel/Margin/Content/Actions/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="Center/Panel/Margin/Content/Actions/ViewDeckButton" to="." method="_on_view_deck_button_pressed"]
