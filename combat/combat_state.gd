@@ -135,26 +135,67 @@ func end_player_turn(enemy_move: EnemyMoveData, new_hand_size: int = 5) -> Dicti
 	energy = 0
 	phase = Phase.ENEMY_TURN
 
+	# Player's turn ends: their duration debuffs count down.
+	player_status.tick_turn_end()
+
+	# Enemy turn begins with poison (ignores block).
+	var enemy_poison := enemy_status.tick_turn_start()
+	enemy_health = maxi(0, enemy_health - enemy_poison)
+
+	var result := {
+		"move_name": enemy_move.display_name,
+		"attack": 0,
+		"blocked": 0,
+		"damage_taken": 0,
+		"enemy_block_gained": 0,
+		"retained_block": 0,
+		"enemy_poison_damage": enemy_poison,
+		"player_poison_damage": 0,
+		"weak_applied": enemy_move.weak_applied,
+		"vulnerable_applied": enemy_move.vulnerable_applied,
+		"poison_applied": enemy_move.poison_applied,
+	}
+
+	if enemy_health == 0:
+		phase = Phase.WON
+		return result
+
+	# Enemy attacks; its Strength/Weak and the player's Vulnerable adjust damage.
 	enemy_block = 0
-	var blocked_damage := mini(player_block, enemy_move.damage)
-	var damage_taken := maxi(0, enemy_move.damage - player_block)
+	var attack_damage := _attack_damage(enemy_move.damage, enemy_status, player_status)
+	var blocked_damage := mini(player_block, attack_damage)
+	var damage_taken := maxi(0, attack_damage - player_block)
 	player_health = maxi(0, player_health - damage_taken)
-	var remaining_block := maxi(0, player_block - enemy_move.damage)
+	var remaining_block := maxi(0, player_block - attack_damage)
 	var retained_block := remaining_block if retain_block_this_turn else 0
 	player_block = retained_block
 	retain_block_this_turn = false
 	enemy_block += enemy_move.block
 	enemy_turn_index += 1
 
-	var result := {
-		"move_name": enemy_move.display_name,
-		"attack": enemy_move.damage,
-		"blocked": blocked_damage,
-		"damage_taken": damage_taken,
-		"enemy_block_gained": enemy_move.block,
-		"retained_block": retained_block,
-	}
+	result.attack = attack_damage
+	result.blocked = blocked_damage
+	result.damage_taken = damage_taken
+	result.enemy_block_gained = enemy_move.block
+	result.retained_block = retained_block
 
+	# The move applies statuses to the player and can buff the enemy.
+	player_status.add(StatusSet.Type.WEAK, enemy_move.weak_applied)
+	player_status.add(StatusSet.Type.VULNERABLE, enemy_move.vulnerable_applied)
+	player_status.add(StatusSet.Type.POISON, enemy_move.poison_applied)
+	enemy_status.add(StatusSet.Type.STRENGTH, enemy_move.strength_gained)
+
+	# Enemy's turn ends: its duration debuffs count down.
+	enemy_status.tick_turn_end()
+
+	if player_health == 0:
+		phase = Phase.LOST
+		return result
+
+	# Player regains control: their poison ticks before the new turn.
+	var player_poison := player_status.tick_turn_start()
+	player_health = maxi(0, player_health - player_poison)
+	result.player_poison_damage = player_poison
 	if player_health == 0:
 		phase = Phase.LOST
 		return result

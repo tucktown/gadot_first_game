@@ -19,6 +19,10 @@ func _run_tests() -> void:
 	_test_weak_reduces_damage_dealt()
 	_test_combined_status_damage_formula()
 	_test_card_applies_statuses_to_enemy()
+	_test_enemy_poison_triggers_and_decrements()
+	_test_player_poison_ignores_block()
+	_test_duration_status_expires_at_turn_end()
+	_test_enemy_move_applies_weak_to_player()
 	if failures == 0:
 		print("Combat state tests passed.")
 	call_deferred("_finish")
@@ -181,6 +185,43 @@ func _test_card_applies_statuses_to_enemy() -> void:
 	state.play_card(state.hand[0])
 	_expect(state.enemy_status.amount(StatusSet.Type.VULNERABLE) == 2, "Card should apply Vulnerable to the enemy.")
 	_expect(state.enemy_status.amount(StatusSet.Type.POISON) == 3, "Card should apply Poison to the enemy.")
+
+
+func _test_enemy_poison_triggers_and_decrements() -> void:
+	var state := _fresh_state()
+	state.enemy_status.add(StatusSet.Type.POISON, 4)
+	var move := EnemyMoveData.new()
+	var result := state.end_player_turn(move, 0)
+	_expect(result.enemy_poison_damage == 4, "Enemy poison should trigger at enemy turn start.")
+	_expect(state.enemy_health == 46, "Poison should reduce enemy health by its amount.")
+	_expect(state.enemy_status.amount(StatusSet.Type.POISON) == 3, "Poison should decrement after firing.")
+
+
+func _test_player_poison_ignores_block() -> void:
+	var state := _fresh_state()
+	state.player_block = 20
+	state.player_status.add(StatusSet.Type.POISON, 5)
+	var move := EnemyMoveData.new()
+	var result := state.end_player_turn(move, 0)
+	_expect(result.player_poison_damage == 5, "Player poison should trigger when regaining control.")
+	_expect(state.player_health == 45, "Poison should ignore block and reduce health.")
+
+
+func _test_duration_status_expires_at_turn_end() -> void:
+	var state := _fresh_state()
+	state.player_status.add(StatusSet.Type.VULNERABLE, 1)
+	var move := EnemyMoveData.new()
+	state.end_player_turn(move, 0)
+	_expect(state.player_status.amount(StatusSet.Type.VULNERABLE) == 0, "Player Vulnerable should expire after one turn end.")
+
+
+func _test_enemy_move_applies_weak_to_player() -> void:
+	var state := _fresh_state()
+	var move := EnemyMoveData.new()
+	move.damage = 5
+	move.weak_applied = 2
+	state.end_player_turn(move, 0)
+	_expect(state.player_status.amount(StatusSet.Type.WEAK) == 2, "Enemy move should apply Weak to the player.")
 
 
 func _fresh_state() -> CombatState:
