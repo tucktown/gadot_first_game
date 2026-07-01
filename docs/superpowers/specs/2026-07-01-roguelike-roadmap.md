@@ -27,6 +27,22 @@ milestones are built "map-aware".
 
 Rationale: 1-3 give the map content and stakes; 4 assembles them; 5-6 deepen it.
 
+## Backlog / future enhancements (unscheduled)
+
+Captured during playtesting; slot into a milestone (mostly Polish) when convenient.
+
+- **Run Complete screen revamp** — current screen is bare; make it a proper
+  end-of-run summary/celebration.
+- **Status hover tooltips** — hovering a status badge (player or enemy) explains
+  what it does (Vulnerable/Weak/Strength/Poison). Combat legibility.
+- **Victory SFX** — play a win sound when a combat is won (`AudioManager` already
+  has an SFX bus; add a cue in the WON branch).
+- **Balance: Strength may be too strong** — enemies (esp. The Gravemaw) can stack
+  Strength high, snowballing attack damage. Possibly fine as boss threat, but
+  revisit tuning; consider a per-turn cap or diminishing returns if it dominates.
+- **Run telemetry** — persist per-combat/per-run history for data-driven
+  balancing (see the run-telemetry note in memory). Nothing is logged today.
+
 ## Provisional map data model (finalized in milestone 4)
 
 Sketch only, to keep milestones 1-3 compatible. Subject to change.
