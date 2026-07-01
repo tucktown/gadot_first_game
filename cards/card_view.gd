@@ -3,6 +3,9 @@ extends PanelContainer
 
 signal selected(card: CardInstance)
 
+const DESC_MAX_FONT := 16
+const DESC_MIN_FONT := 9
+
 @onready var name_label: Label = %NameLabel
 @onready var cost_label: Label = %CostLabel
 @onready var artwork: TextureRect = %Artwork
@@ -25,6 +28,8 @@ func display(card_instance: CardInstance) -> void:
 	cost_label.text = str(card.get_energy_cost())
 	artwork.texture = card.definition.artwork
 	description_label.text = card.definition.description
+	# Shrink the description font until it fits its box, so long text never overflows the card.
+	call_deferred("_fit_description")
 
 
 func set_playable(is_playable: bool) -> void:
@@ -107,6 +112,25 @@ func _reset_hover() -> void:
 	z_index = 0
 	hover_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	hover_tween.tween_property(self, "scale", Vector2.ONE, 0.1)
+
+
+func _fit_description() -> void:
+	var font := description_label.get_theme_font("font")
+	if font == null:
+		return
+	var avail := description_label.size
+	if avail.x <= 0.0 or avail.y <= 0.0:
+		# Layout not resolved yet; retry next frame.
+		call_deferred("_fit_description")
+		return
+	var chosen := DESC_MIN_FONT
+	for candidate in range(DESC_MAX_FONT, DESC_MIN_FONT - 1, -1):
+		var needed := font.get_multiline_string_size(
+			description_label.text, HORIZONTAL_ALIGNMENT_LEFT, avail.x, candidate)
+		if needed.y <= avail.y:
+			chosen = candidate
+			break
+	description_label.add_theme_font_size_override("font_size", chosen)
 
 
 func _update_pivot() -> void:

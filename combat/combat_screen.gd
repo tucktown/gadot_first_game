@@ -3,8 +3,6 @@ extends Control
 
 const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
 const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
-const INTENT_ATTACK_ICON_PATH := "res://assets/art/ui/intent_attack.png"
-const INTENT_BLOCK_ICON_PATH := "res://assets/art/ui/intent_block.png"
 
 @onready var player_health_label: Label = %PlayerHealthLabel
 @onready var player_health_bar: ProgressBar = %PlayerHealthBar
@@ -20,7 +18,7 @@ const INTENT_BLOCK_ICON_PATH := "res://assets/art/ui/intent_block.png"
 @onready var enemy_health_label: Label = %EnemyHealthLabel
 @onready var enemy_health_bar: ProgressBar = %EnemyHealthBar
 @onready var enemy_block_label: Label = %EnemyBlockLabel
-@onready var enemy_intent: HBoxContainer = %EnemyIntent
+@onready var enemy_intent: VBoxContainer = %EnemyIntent
 @onready var message_label: Label = %MessageLabel
 @onready var hand_container: HBoxContainer = %Hand
 @onready var end_turn_button: BaseButton = %EndTurnButton
@@ -145,23 +143,23 @@ func _on_card_selected(card: CardInstance) -> void:
 		await _animate_hit(enemy_panel)
 	if result.block_gained > 0:
 		AudioManager.play_block()
-		_spawn_floating_value("+%d BLOCK" % result.block_gained, player_panel, Color(0.35, 0.75, 1.0))
+		await _notify("+%d BLOCK" % result.block_gained, player_panel, Color(0.35, 0.75, 1.0))
 	if result.cards_drawn > 0:
-		_spawn_floating_value("+%d CARD" % result.cards_drawn, hand_container, Color(0.72, 0.58, 1.0))
+		await _notify("+%d CARD" % result.cards_drawn, hand_container, Color(0.72, 0.58, 1.0))
 	if result.energy_gained > 0:
-		_spawn_floating_value("+%d ENERGY" % result.energy_gained, player_panel, Color(1.0, 0.82, 0.3))
+		await _notify("+%d ENERGY" % result.energy_gained, player_panel, Color(1.0, 0.82, 0.3))
 	if result.healed > 0:
-		_spawn_floating_value("+%d HP" % result.healed, player_panel, Color(0.4, 0.9, 0.45))
+		await _notify("+%d HP" % result.healed, player_panel, Color(0.4, 0.9, 0.45))
 	if result.block_retention_armed:
-		_spawn_floating_value("FORTIFIED", player_panel, Color(0.45, 0.85, 1.0))
+		await _notify("FORTIFIED", player_panel, Color(0.45, 0.85, 1.0))
 	if result.vulnerable_applied > 0:
-		_spawn_floating_value("VULN %d" % result.vulnerable_applied, enemy_panel, Color(1.0, 0.45, 0.4))
+		await _notify("VULN %d" % result.vulnerable_applied, enemy_panel, Color(1.0, 0.45, 0.4))
 	if result.weak_applied > 0:
-		_spawn_floating_value("WEAK %d" % result.weak_applied, enemy_panel, Color(1.0, 0.45, 0.4))
+		await _notify("WEAK %d" % result.weak_applied, enemy_panel, Color(1.0, 0.45, 0.4))
 	if result.poison_applied > 0:
-		_spawn_floating_value("POISON %d" % result.poison_applied, enemy_panel, Color(0.5, 0.9, 0.5))
+		await _notify("POISON %d" % result.poison_applied, enemy_panel, Color(0.5, 0.9, 0.5))
 	if result.strength_gained > 0:
-		_spawn_floating_value("STR +%d" % result.strength_gained, player_panel, Color(1.0, 0.82, 0.3))
+		await _notify("STR +%d" % result.strength_gained, player_panel, Color(1.0, 0.82, 0.3))
 
 	if state.phase == CombatState.Phase.WON:
 		message_label.text = "%s wins the combat!" % card_name
@@ -204,19 +202,19 @@ func _on_end_turn_button_pressed() -> void:
 		await _animate_hit(player_panel)
 	elif result.blocked > 0:
 		AudioManager.play_block()
-		_spawn_floating_value("BLOCKED", player_panel, Color(0.35, 0.75, 1.0))
+		await _notify("BLOCKED", player_panel, Color(0.35, 0.75, 1.0))
 	if result.enemy_block_gained > 0:
-		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
+		await _notify("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
 	if result.retained_block > 0:
-		_spawn_floating_value("%d BLOCK RETAINED" % result.retained_block, player_panel, Color(0.45, 0.85, 1.0))
+		await _notify("%d BLOCK RETAINED" % result.retained_block, player_panel, Color(0.45, 0.85, 1.0))
 	if result.enemy_poison_damage > 0:
-		_spawn_floating_value("POISON %d" % result.enemy_poison_damage, enemy_panel, Color(0.5, 0.9, 0.5))
+		await _notify("POISON %d" % result.enemy_poison_damage, enemy_panel, Color(0.5, 0.9, 0.5))
 	if result.player_poison_damage > 0:
-		_spawn_floating_value("POISON %d" % result.player_poison_damage, player_panel, Color(0.5, 0.9, 0.5))
+		await _notify("POISON %d" % result.player_poison_damage, player_panel, Color(0.5, 0.9, 0.5))
 	if result.weak_applied > 0:
-		_spawn_floating_value("WEAK %d" % result.weak_applied, player_panel, Color(1.0, 0.45, 0.4))
+		await _notify("WEAK %d" % result.weak_applied, player_panel, Color(1.0, 0.45, 0.4))
 	if result.vulnerable_applied > 0:
-		_spawn_floating_value("VULN %d" % result.vulnerable_applied, player_panel, Color(1.0, 0.45, 0.4))
+		await _notify("VULN %d" % result.vulnerable_applied, player_panel, Color(1.0, 0.45, 0.4))
 
 	if state.phase == CombatState.Phase.LOST:
 		RunState.clear_saved_run()
@@ -281,58 +279,43 @@ func _refresh_intent(move: EnemyMoveData) -> void:
 		child.queue_free()
 	if move == null:
 		enemy_intent.tooltip_text = ""
-		_add_intent_text_chip("Waiting", Color(0.7, 0.7, 0.7))
+		_add_intent_name("Waiting")
 		return
+	# Action name on its own line above the effect labels (e.g. "Snarl" / "4 damage  Weak 1").
+	_add_intent_name(move.display_name)
+	var effects := HBoxContainer.new()
+	effects.alignment = BoxContainer.ALIGNMENT_CENTER
+	effects.add_theme_constant_override("separation", 12)
+	enemy_intent.add_child(effects)
 	if move.damage > 0:
-		var attack_icon := _load_intent_icon(INTENT_ATTACK_ICON_PATH)
-		if attack_icon:
-			_add_intent_icon_chip(attack_icon, str(move.damage))
-		else:
-			_add_intent_text_chip("Atk %d" % move.damage, Color(1.0, 0.55, 0.4))
+		_add_intent_chip(effects, "%d damage" % move.damage, Color(1.0, 0.55, 0.4))
 	if move.block > 0:
-		var block_icon := _load_intent_icon(INTENT_BLOCK_ICON_PATH)
-		if block_icon:
-			_add_intent_icon_chip(block_icon, str(move.block))
-		else:
-			_add_intent_text_chip("Def %d" % move.block, Color(0.35, 0.75, 1.0))
+		_add_intent_chip(effects, "%d block" % move.block, Color(0.35, 0.75, 1.0))
 	if move.weak_applied > 0:
-		_add_intent_text_chip("Weak %d" % move.weak_applied, _status_color("debuff"))
+		_add_intent_chip(effects, "Weak %d" % move.weak_applied, _status_color("debuff"))
 	if move.vulnerable_applied > 0:
-		_add_intent_text_chip("Vuln %d" % move.vulnerable_applied, _status_color("debuff"))
+		_add_intent_chip(effects, "Vulnerable %d" % move.vulnerable_applied, _status_color("debuff"))
 	if move.poison_applied > 0:
-		_add_intent_text_chip("Psn %d" % move.poison_applied, _status_color("poison"))
+		_add_intent_chip(effects, "Poison %d" % move.poison_applied, _status_color("poison"))
 	if move.strength_gained > 0:
-		_add_intent_text_chip("Str %d" % move.strength_gained, _status_color("buff"))
-	if enemy_intent.get_child_count() == 0:
-		_add_intent_text_chip(move.display_name, Color(0.7, 0.7, 0.7))
+		_add_intent_chip(effects, "Strength %d" % move.strength_gained, _status_color("buff"))
 	enemy_intent.tooltip_text = _intent_tooltip(move)
 
 
-func _load_intent_icon(path: String) -> Texture2D:
-	if ResourceLoader.exists(path):
-		return load(path)
-	return null
-
-
-func _add_intent_icon_chip(icon: Texture2D, value: String) -> void:
-	var chip := HBoxContainer.new()
-	chip.add_theme_constant_override("separation", 2)
-	var texture := TextureRect.new()
-	texture.texture = icon
-	texture.custom_minimum_size = Vector2(22, 22)
-	texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	chip.add_child(texture)
+func _add_intent_name(text: String) -> void:
 	var label := Label.new()
-	label.text = value
-	chip.add_child(label)
-	enemy_intent.add_child(chip)
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.add_theme_color_override("font_color", Color(1.0, 0.55, 0.4))
+	enemy_intent.add_child(label)
 
 
-func _add_intent_text_chip(text: String, color: Color) -> void:
+func _add_intent_chip(container: HBoxContainer, text: String, color: Color) -> void:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_color_override("font_color", color)
-	enemy_intent.add_child(label)
+	container.add_child(label)
 
 
 func _intent_tooltip(move: EnemyMoveData) -> String:
@@ -429,6 +412,13 @@ func _animate_hit(target: Control) -> void:
 	tween.tween_property(target, "position", original_position, 0.06)
 	tween.parallel().tween_property(target, "modulate", Color.WHITE, 0.1)
 	await tween.finished
+
+
+func _notify(text: String, target: Control, color: Color) -> void:
+	# Spawn a floating value, then wait a beat so stacked notifications
+	# appear one at a time instead of overlapping.
+	_spawn_floating_value(text, target, color)
+	await get_tree().create_timer(0.2).timeout
 
 
 func _spawn_floating_value(text: String, target: Control, color: Color) -> void:
