@@ -42,6 +42,14 @@ Captured during playtesting; slot into a milestone (mostly Polish) when convenie
   revisit tuning; consider a per-turn cap or diminishing returns if it dominates.
 - **Run telemetry** — persist per-combat/per-run history for data-driven
   balancing (see the run-telemetry note in memory). Nothing is logged today.
+- **Dynamic card values (status-aware previews)** — show a card's *effective*
+  numbers given current statuses, not the base definition. E.g. Strike's "Deal 5
+  damage" reads "Deal 7 damage" when the player has Strength 2 (and reflects
+  Weak/Vulnerable too). Highlight the changed number: green when it's better for
+  the player (buffed damage/block), red when worse (Weak-reduced). Needs the
+  combat `player_status`/`enemy_status` piped into `CardView.display` and the
+  effective value computed with the same formula as `CombatState._attack_damage`
+  so preview and outcome always agree.
 
 ## Provisional map data model (finalized in milestone 4)
 
