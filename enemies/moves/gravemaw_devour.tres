@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyMoveData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://enemies/enemy_move_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Devour"
+damage = 12
+weight = 3
+condition = 2
+condition_value = 1.0

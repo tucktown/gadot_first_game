@@ -14,6 +14,8 @@ func _run_tests() -> void:
 	_test_weighted_pick_is_deterministic_with_seed()
 	_test_always_fallback_when_none_eligible()
 	_test_end_turn_executes_planned_move_and_replans()
+	_test_roster_loads_and_is_valid()
+	_test_run_ends_on_boss()
 	if failures == 0:
 		print("Enemy AI tests passed.")
 	call_deferred("_finish")
@@ -94,6 +96,27 @@ func _test_end_turn_executes_planned_move_and_replans() -> void:
 	var result := state.end_player_turn(0)
 	_expect(result.attack == 8, "end_player_turn should execute the planned move's damage.")
 	_expect(state.planned_move != null, "A new move should be planned for the next turn.")
+
+
+func _test_roster_loads_and_is_valid() -> void:
+	var roster := [
+		RunState.CINDER_HOUND, RunState.PLAGUE_CRAWLER, RunState.BONE_ACOLYTE,
+		RunState.DREAD_SENTINEL, RunState.GRAVEMAW,
+	]
+	for enemy in roster:
+		_expect(enemy != null, "Roster enemy should load.")
+		_expect(not enemy.moves.is_empty(), "%s should have moves." % enemy.display_name)
+		var has_always := false
+		for move in enemy.moves:
+			if move.condition == EnemyMoveData.Condition.ALWAYS:
+				has_always = true
+		_expect(has_always, "%s must have at least one ALWAYS move (selector fallback)." % enemy.display_name)
+
+
+func _test_run_ends_on_boss() -> void:
+	_expect(RunState.ENCOUNTERS.size() == 5, "Run should have 5 encounters.")
+	_expect(RunState.ENCOUNTERS[4] == RunState.GRAVEMAW, "Final encounter should be the boss.")
+	_expect(RunState.SAVE_VERSION == 2, "Save version should be bumped to 2.")
 
 
 func _move(name: String, damage: int, condition: EnemyMoveData.Condition, value: float, weight: int) -> EnemyMoveData:

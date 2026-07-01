@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 const STRIKE_CARD := preload("res://cards/definitions/strike.tres")
 const DEFEND_CARD := preload("res://cards/definitions/defend.tres")
 const HEAVY_STRIKE_CARD := preload("res://cards/definitions/heavy_strike.tres")
@@ -20,7 +20,12 @@ const VENOM_CUT_CARD := preload("res://cards/definitions/venom_cut.tres")
 const TRAINING_DUMMY := preload("res://enemies/definitions/training_dummy.tres")
 const RAIDER := preload("res://enemies/definitions/raider.tres")
 const GUARDIAN := preload("res://enemies/definitions/guardian.tres")
-const ENCOUNTERS: Array[EnemyData] = [TRAINING_DUMMY, RAIDER, GUARDIAN]
+const CINDER_HOUND := preload("res://enemies/definitions/cinder_hound.tres")
+const PLAGUE_CRAWLER := preload("res://enemies/definitions/plague_crawler.tres")
+const BONE_ACOLYTE := preload("res://enemies/definitions/bone_acolyte.tres")
+const DREAD_SENTINEL := preload("res://enemies/definitions/dread_sentinel.tres")
+const GRAVEMAW := preload("res://enemies/definitions/gravemaw.tres")
+const ENCOUNTERS: Array[EnemyData] = [CINDER_HOUND, PLAGUE_CRAWLER, DREAD_SENTINEL, BONE_ACOLYTE, GRAVEMAW]
 const CARD_CATALOG := {
 	&"strike": STRIKE_CARD,
 	&"defend": DEFEND_CARD,
