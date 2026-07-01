@@ -43,7 +43,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(680, 0)
+custom_minimum_size = Vector2(780, 0)
 layout_mode = 2
 
 [node name="Margin" type="MarginContainer" parent="Center/Panel"]
@@ -75,7 +75,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 230)
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="MessageLabel" type="Label" parent="Center/Panel/Margin/Content"]

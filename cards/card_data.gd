@@ -17,6 +17,12 @@ enum Target {
 @export var target: Target = Target.SINGLE_ENEMY
 @export_range(0, 999) var damage: int = 0
 @export_range(0, 999) var block: int = 0
+@export_range(0, 9) var cards_drawn: int = 0
+@export_range(0, 9) var energy_gained: int = 0
+@export var retains_block: bool = false
+@export_range(0, 999) var heal: int = 0
+@export var heals_for_damage_dealt: bool = false
+@export var energy_uncapped: bool = false
 
 @export_category("Presentation")
 @export var artwork: Texture2D

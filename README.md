@@ -75,7 +75,14 @@ Audio is routed through separate Music and SFX buses managed by the
 
 ## Next milestone: gameplay depth and polish
 
-- Add more card effects and meaningful deck-building choices
+- Add more card effects and meaningful deck-building choices (in progress: card draw,
+  energy gain, one-turn block retention, healing, lifesteal, and energy overflow)
 - Expand enemy behavior and encounter variety
 - Balance health, damage, rewards, and encounter pacing
 - Continue refining screen transitions and moment-to-moment feedback
+
+The reward pool now includes tempo-oriented Guarded Strike, energy-restoring Power
+Blow, free Quick Guard, and Fortify, which carries unspent block into the next turn.
+It also holds Second Wind (energy over the cap), Devour (heavy lifesteal), Mend
+(flat healing), Bulwark (a retained wall of block), and Rally (attack, draw, and
+refund). Each reward now offers three cards drawn at random from that pool.

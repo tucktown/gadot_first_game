@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/devour.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"devour"
+display_name = "Devour"
+description = "Deal 12 damage. Heal health equal to damage dealt."
+energy_cost = 3
+target = 2
+damage = 12
+heals_for_damage_dealt = true
+artwork = ExtResource("2")

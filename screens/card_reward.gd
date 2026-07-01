@@ -2,9 +2,18 @@ extends Control
 
 const CARD_VIEW_SCENE := preload("res://cards/card_view.tscn")
 const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
-const GUARDED_STRIKE_CARD := preload("res://cards/definitions/guarded_strike.tres")
-const POWER_BLOW_CARD := preload("res://cards/definitions/power_blow.tres")
-const QUICK_GUARD_CARD := preload("res://cards/definitions/quick_guard.tres")
+const REWARD_CHOICES := 3
+const REWARD_POOL: Array[CardData] = [
+	preload("res://cards/definitions/guarded_strike.tres"),
+	preload("res://cards/definitions/power_blow.tres"),
+	preload("res://cards/definitions/quick_guard.tres"),
+	preload("res://cards/definitions/fortify.tres"),
+	preload("res://cards/definitions/second_wind.tres"),
+	preload("res://cards/definitions/devour.tres"),
+	preload("res://cards/definitions/mend.tres"),
+	preload("res://cards/definitions/bulwark.tres"),
+	preload("res://cards/definitions/rally.tres"),
+]
 
 @onready var reward_container: HBoxContainer = %RewardContainer
 @onready var message_label: Label = %MessageLabel
@@ -17,7 +26,9 @@ var reward_chosen := false
 func _ready() -> void:
 	RunState.ensure_run_started()
 	deck_size_label.text = "Current deck: %d cards" % RunState.deck.size()
-	var rewards: Array[CardData] = [GUARDED_STRIKE_CARD, POWER_BLOW_CARD, QUICK_GUARD_CARD]
+	var rewards := REWARD_POOL.duplicate()
+	rewards.shuffle()
+	rewards = rewards.slice(0, REWARD_CHOICES)
 	for definition in rewards:
 		var card_view: CardView = CARD_VIEW_SCENE.instantiate()
 		reward_container.add_child(card_view)

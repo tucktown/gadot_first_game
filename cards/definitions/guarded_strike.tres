@@ -7,9 +7,10 @@
 script = ExtResource("1")
 id = &"guarded_strike"
 display_name = "Guarded Strike"
-description = "Deal 4 damage. Gain 4 block."
+description = "Deal 3 damage. Gain 3 block. Draw 1 card."
 energy_cost = 1
 target = 2
-damage = 4
-block = 4
+damage = 3
+block = 3
+cards_drawn = 1
 artwork = ExtResource("2")

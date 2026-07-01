@@ -118,23 +118,32 @@ func _on_card_selected(card: CardInstance) -> void:
 	if result.block_gained > 0:
 		AudioManager.play_block()
 		_spawn_floating_value("+%d BLOCK" % result.block_gained, status_bar, Color(0.35, 0.75, 1.0))
+	if result.cards_drawn > 0:
+		_spawn_floating_value("+%d CARD" % result.cards_drawn, hand_container, Color(0.72, 0.58, 1.0))
+	if result.energy_gained > 0:
+		_spawn_floating_value("+%d ENERGY" % result.energy_gained, status_bar, Color(1.0, 0.82, 0.3))
+	if result.healed > 0:
+		_spawn_floating_value("+%d HP" % result.healed, status_bar, Color(0.4, 0.9, 0.45))
+	if result.block_retention_armed:
+		_spawn_floating_value("FORTIFIED", status_bar, Color(0.45, 0.85, 1.0))
 
 	if state.phase == CombatState.Phase.WON:
 		message_label.text = "%s wins the combat!" % card_name
-	elif result.damage_dealt > 0 and result.block_gained > 0:
-		message_label.text = "%s deals %d damage and grants %d block." % [
-			card_name,
-			result.damage_dealt,
-			result.block_gained,
-		]
-	elif card.definition.damage > 0:
-		message_label.text = "%s deals %d damage (%d blocked)." % [
-			card_name,
-			result.damage_dealt,
-			result.damage_blocked,
-		]
-	elif result.block_gained > 0:
-		message_label.text = "%s grants %d block." % [card_name, result.block_gained]
+	else:
+		var effects: Array[String] = []
+		if card.definition.damage > 0:
+			effects.append("deals %d damage (%d blocked)" % [result.damage_dealt, result.damage_blocked])
+		if result.block_gained > 0:
+			effects.append("grants %d block" % result.block_gained)
+		if result.cards_drawn > 0:
+			effects.append("draws %d card" % result.cards_drawn)
+		if result.energy_gained > 0:
+			effects.append("restores %d energy" % result.energy_gained)
+		if result.healed > 0:
+			effects.append("restores %d health" % result.healed)
+		if result.block_retention_armed:
+			effects.append("fortifies your block")
+		message_label.text = "%s %s." % [card_name, ", ".join(effects)]
 
 	_set_input_locked(false)
 	_refresh_combat_view()
@@ -161,6 +170,8 @@ func _on_end_turn_button_pressed() -> void:
 		_spawn_floating_value("BLOCKED", status_bar, Color(0.35, 0.75, 1.0))
 	if result.enemy_block_gained > 0:
 		_spawn_floating_value("+%d BLOCK" % result.enemy_block_gained, enemy_panel, Color(0.35, 0.75, 1.0))
+	if result.retained_block > 0:
+		_spawn_floating_value("%d BLOCK RETAINED" % result.retained_block, status_bar, Color(0.45, 0.85, 1.0))
 
 	if state.phase == CombatState.Phase.LOST:
 		RunState.clear_saved_run()
@@ -174,6 +185,8 @@ func _on_end_turn_button_pressed() -> void:
 			effects.append("%d damage taken, %d blocked" % [result.damage_taken, result.blocked])
 		if result.enemy_block_gained > 0:
 			effects.append("%d block gained" % result.enemy_block_gained)
+		if result.retained_block > 0:
+			effects.append("%d player block retained" % result.retained_block)
 		message_label.text = "%s uses %s: %s." % [
 			enemy.display_name,
 			result.move_name,

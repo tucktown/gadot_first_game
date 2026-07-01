@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/second_wind.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"second_wind"
+display_name = "Second Wind"
+description = "Gain 2 energy. Can exceed your maximum."
+energy_cost = 0
+target = 1
+energy_gained = 2
+energy_uncapped = true
+artwork = ExtResource("2")

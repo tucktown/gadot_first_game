@@ -1,15 +1,16 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/art/cards/power_blow.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/rally.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"power_blow"
-display_name = "Power Blow"
-description = "Deal 14 damage. Gain 1 energy."
-energy_cost = 2
+id = &"rally"
+display_name = "Rally"
+description = "Deal 5 damage. Draw 1 card. Gain 1 energy."
+energy_cost = 1
 target = 2
-damage = 14
+damage = 5
+cards_drawn = 1
 energy_gained = 1
 artwork = ExtResource("2")

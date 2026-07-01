@@ -7,6 +7,12 @@ const HEAVY_STRIKE_CARD := preload("res://cards/definitions/heavy_strike.tres")
 const GUARDED_STRIKE_CARD := preload("res://cards/definitions/guarded_strike.tres")
 const POWER_BLOW_CARD := preload("res://cards/definitions/power_blow.tres")
 const QUICK_GUARD_CARD := preload("res://cards/definitions/quick_guard.tres")
+const FORTIFY_CARD := preload("res://cards/definitions/fortify.tres")
+const SECOND_WIND_CARD := preload("res://cards/definitions/second_wind.tres")
+const DEVOUR_CARD := preload("res://cards/definitions/devour.tres")
+const MEND_CARD := preload("res://cards/definitions/mend.tres")
+const BULWARK_CARD := preload("res://cards/definitions/bulwark.tres")
+const RALLY_CARD := preload("res://cards/definitions/rally.tres")
 const TRAINING_DUMMY := preload("res://enemies/definitions/training_dummy.tres")
 const RAIDER := preload("res://enemies/definitions/raider.tres")
 const GUARDIAN := preload("res://enemies/definitions/guardian.tres")
@@ -18,6 +24,12 @@ const CARD_CATALOG := {
 	&"guarded_strike": GUARDED_STRIKE_CARD,
 	&"power_blow": POWER_BLOW_CARD,
 	&"quick_guard": QUICK_GUARD_CARD,
+	&"fortify": FORTIFY_CARD,
+	&"second_wind": SECOND_WIND_CARD,
+	&"devour": DEVOUR_CARD,
+	&"mend": MEND_CARD,
+	&"bulwark": BULWARK_CARD,
+	&"rally": RALLY_CARD,
 }
 
 var max_health: int = 50
