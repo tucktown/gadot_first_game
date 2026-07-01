@@ -26,6 +26,7 @@ var enemy_status: StatusSet = StatusSet.new()
 var enemy: EnemyData
 var planned_move: EnemyMoveData
 var rng := RandomNumberGenerator.new()
+var relics: Array[RelicData] = []
 
 
 func begin(
@@ -35,6 +36,7 @@ func begin(
 	starting_player_max_health: int = 50,
 	opening_hand_size: int = 5,
 	enemy_data: EnemyData = null,
+	relic_list: Array[RelicData] = [],
 ) -> void:
 	phase = Phase.PLAYER_TURN
 	player_max_health = starting_player_max_health
@@ -51,6 +53,9 @@ func begin(
 	hand.clear()
 	deck.initialize(card_definitions)
 	draw_cards(opening_hand_size)
+	relics = relic_list
+	_apply_relics(RelicData.Trigger.COMBAT_START)
+	_apply_relics(RelicData.Trigger.TURN_START)
 	enemy = enemy_data
 	rng.randomize()
 	plan_enemy_move()
@@ -175,6 +180,21 @@ func plan_enemy_move() -> void:
 	planned_move = choose_enemy_move(enemy)
 
 
+func _apply_relics(trigger: RelicData.Trigger) -> void:
+	for relic in relics:
+		if relic.trigger != trigger:
+			continue
+		match relic.effect:
+			RelicData.Effect.GAIN_BLOCK:
+				player_block += relic.magnitude
+			RelicData.Effect.GAIN_ENERGY:
+				energy += relic.magnitude
+			RelicData.Effect.GAIN_STRENGTH:
+				player_status.add(StatusSet.Type.STRENGTH, relic.magnitude)
+			RelicData.Effect.DRAW_CARD:
+				draw_cards(relic.magnitude)
+
+
 func end_player_turn(new_hand_size: int = 5) -> Dictionary:
 	if phase != Phase.PLAYER_TURN:
 		return {}
@@ -258,4 +278,5 @@ func end_player_turn(new_hand_size: int = 5) -> Dictionary:
 	phase = Phase.PLAYER_TURN
 	energy = max_energy
 	draw_cards(new_hand_size)
+	_apply_relics(RelicData.Trigger.TURN_START)
 	return result
