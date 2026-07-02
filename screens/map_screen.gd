@@ -1,8 +1,12 @@
 extends Control
 
+const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
+
 const NODE_SIZE := Vector2(56, 56)
-const X0 := 220.0
-const Y0 := 60.0
+# ponytail: laid out against the fixed 1280x720 design viewport (see CLAUDE.md).
+# Switch CENTER_X to the live viewport width if the game ever goes resolution-dynamic.
+const CENTER_X := 640.0
+const Y0 := 92.0
 const X_GAP := 150.0
 const Y_GAP := 84.0
 
@@ -23,6 +27,7 @@ const TYPE_COLOR := {
 @onready var legend: VBoxContainer = %Legend
 
 var _node_buttons: Dictionary = {}   # id -> Button
+var _row_width: Dictionary = {}       # row -> node count (for centering)
 
 
 func _ready() -> void:
@@ -50,8 +55,10 @@ func _build_map() -> void:
 	var map: GameMap = RunState.map
 	var available := map.get_available_node_ids()
 	var top_row := 0
+	_row_width.clear()
 	for node in map.nodes:
 		top_row = maxi(top_row, node.row)
+		_row_width[node.row] = int(_row_width.get(node.row, 0)) + 1
 
 	# Edges first, so buttons draw on top.
 	for node in map.nodes:
@@ -73,7 +80,7 @@ func _build_map() -> void:
 		button.tooltip_text = _tooltip(node)
 		button.mouse_filter = Control.MOUSE_FILTER_STOP
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		button.add_theme_color_override("font_color", TYPE_COLOR[node.type])
+		_style_node_button(button, node.type)
 		var reachable := available.has(node.id)
 		button.disabled = not reachable
 		button.modulate = Color(1, 1, 1, 1.0) if reachable else Color(1, 1, 1, 0.45)
@@ -82,9 +89,38 @@ func _build_map() -> void:
 		_node_buttons[node.id] = button
 
 
+# A themed node: dark tint of the type's hue for the background, the hue for the
+# border, and a brightened hue for the letter — so each node reads as its type.
+func _style_node_button(button: Button, type: MapNode.Type) -> void:
+	button.add_theme_stylebox_override("normal", _node_stylebox(type, 0.0))
+	button.add_theme_stylebox_override("hover", _node_stylebox(type, 0.12))
+	button.add_theme_stylebox_override("pressed", _node_stylebox(type, 0.06))
+	button.add_theme_stylebox_override("disabled", _node_stylebox(type, 0.0))
+	button.add_theme_stylebox_override("focus", _node_stylebox(type, 0.0))
+	var letter_color: Color = TYPE_COLOR[type].lightened(0.4)
+	button.add_theme_color_override("font_color", letter_color)
+	button.add_theme_color_override("font_hover_color", letter_color)
+	button.add_theme_color_override("font_pressed_color", letter_color)
+	button.add_theme_color_override("font_disabled_color", letter_color)
+	button.add_theme_font_size_override("font_size", 22)
+
+
+func _node_stylebox(type: MapNode.Type, lighten: float) -> StyleBoxFlat:
+	var hue: Color = TYPE_COLOR[type]
+	var box := StyleBoxFlat.new()
+	box.bg_color = hue.darkened(0.55).lightened(lighten)
+	box.border_color = hue
+	box.set_border_width_all(2)
+	box.set_corner_radius_all(10)
+	return box
+
+
 func _node_pos(node: MapNode, top_row: int) -> Vector2:
-	# Row 0 sits at the bottom; the boss (top_row) at the top.
-	return Vector2(X0 + node.column * X_GAP, Y0 + (top_row - node.row) * Y_GAP)
+	# Center each row around CENTER_X; row 0 sits at the bottom, boss at the top.
+	var width: int = int(_row_width.get(node.row, 1))
+	var x := CENTER_X + (node.column - (width - 1) / 2.0) * X_GAP - NODE_SIZE.x * 0.5
+	var y := Y0 + (top_row - node.row) * Y_GAP
+	return Vector2(x, y)
 
 
 func _tooltip(node: MapNode) -> String:
@@ -112,3 +148,16 @@ func _on_node_pressed(id: int) -> void:
 		SceneTransition.transition_to("res://screens/map_screen.tscn")   # reload to refresh
 	else:
 		SceneTransition.transition_to("res://combat/combat_screen.tscn")
+
+
+func _on_view_deck_button_pressed() -> void:
+	if get_node_or_null("DeckViewer"):
+		return
+	AudioManager.play_ui_click()
+	var deck_viewer := DECK_VIEWER_SCENE.instantiate()
+	add_child(deck_viewer)
+
+
+func _on_main_menu_button_pressed() -> void:
+	AudioManager.play_ui_click()
+	SceneTransition.transition_to("res://screens/title_screen.tscn")

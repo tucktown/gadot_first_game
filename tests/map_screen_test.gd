@@ -45,6 +45,21 @@ func _test_builds_a_button_per_node() -> void:
 			enabled += 1
 	_expect(enabled == run_state.map.get_available_node_ids().size(),
 		"Only the currently-available nodes should be enabled.")
+	# Layout: every node stays on-screen (no clipping) and each row is centered on 1280/2.
+	var row_center_sum := {}
+	var row_count := {}
+	for id in screen._node_buttons:
+		var btn: Button = screen._node_buttons[id]
+		var rect := Rect2(btn.position, btn.size)
+		_expect(rect.position.x >= 0.0 and rect.end.x <= 1280.0 and rect.position.y >= 0.0 and rect.end.y <= 720.0,
+			"Node %d must stay within the 1280x720 screen (got %s)." % [id, rect])
+		var node: MapNode = run_state.map.get_node_by_id(id)
+		row_center_sum[node.row] = float(row_center_sum.get(node.row, 0.0)) + rect.get_center().x
+		row_count[node.row] = int(row_count.get(node.row, 0)) + 1
+	for row_value in row_center_sum:
+		var avg: float = row_center_sum[row_value] / row_count[row_value]
+		_expect(absf(avg - 640.0) < 1.0,
+			"Row %d should be horizontally centered on 640 (got %.1f)." % [row_value, avg])
 	screen.queue_free()
 	# _ready() started looping music via AudioManager.play_game_music(); stop it and drop
 	# the stream reference so the headless run doesn't report leaked Ogg decoder objects.
