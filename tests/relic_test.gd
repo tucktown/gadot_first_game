@@ -19,6 +19,7 @@ func _run_tests() -> void:
 	_test_relic_catalog_complete()
 	_test_relic_save_load_round_trip()
 	_test_unknown_relic_id_invalidates_save()
+	_test_unknown_enemy_id_invalidates_save()
 	_test_elite_win_awaits_relic()
 	_test_normal_win_awaits_card()
 	if failures == 0:
@@ -120,6 +121,30 @@ func _test_unknown_relic_id_invalidates_save() -> void:
 	SaveManager.save_run(data)
 	var ok: bool = run_state.load_saved_run()
 	_expect(not ok, "An unknown relic id must invalidate the save.")
+	_expect(not SaveManager.has_run(), "Invalid save should be cleared.")
+
+
+func _test_unknown_enemy_id_invalidates_save() -> void:
+	var run_state := _run_state()
+	run_state.start_new_run()
+	var map_dict: Dictionary = run_state.map.to_dict()
+	# Corrupt the first node that carries an enemy id (row-0 nodes are combat).
+	for node_dict in map_dict["nodes"]:
+		if node_dict["enemy_id"] != "":
+			node_dict["enemy_id"] = "not_a_real_enemy"
+			break
+	var data := {
+		"version": RunState.SAVE_VERSION,
+		"current_health": 40,
+		"awaiting_reward": false,
+		"awaiting_relic": false,
+		"deck": ["strike", "strike", "defend", "defend", "heavy_strike"],
+		"relics": [],
+		"map": map_dict,
+	}
+	SaveManager.save_run(data)
+	var ok: bool = run_state.load_saved_run()
+	_expect(not ok, "An unknown enemy id in the map must invalidate the save.")
 	_expect(not SaveManager.has_run(), "Invalid save should be cleared.")
 
 
