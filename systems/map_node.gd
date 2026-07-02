@@ -2,7 +2,7 @@
 class_name MapNode
 extends RefCounted
 
-enum Type { COMBAT, ELITE, REST, BOSS }
+enum Type { COMBAT, ELITE, REST, BOSS, SHOP }
 
 var id: int = -1
 var type: Type = Type.COMBAT

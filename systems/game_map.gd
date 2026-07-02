@@ -42,6 +42,8 @@ static func generate(
 	boss.enemy_id = boss_id
 	rows.append([boss] as Array[MapNode])
 
+	GameMap._ensure_shop(rng, rows)
+
 	# Assign enemies to choice-row nodes
 	for r in CHOICE_ROWS:
 		for node in rows[r]:
@@ -72,9 +74,26 @@ static func _roll_type(rng: RandomNumberGenerator, row: int) -> MapNode.Type:
 	var roll := rng.randf()
 	if roll < 0.15:
 		return MapNode.Type.REST
-	if roll < 0.40 and row >= 2:
+	if roll < 0.27:
+		return MapNode.Type.SHOP
+	if roll < 0.52 and row >= 2:
 		return MapNode.Type.ELITE
 	return MapNode.Type.COMBAT
+
+
+static func _ensure_shop(rng: RandomNumberGenerator, rows: Array) -> void:
+	# Rows 1..CHOICE_ROWS-2 are the shop-eligible mid rows (row 0 combat, row 5 rest).
+	for r in range(1, CHOICE_ROWS - 1):
+		for node in rows[r]:
+			if node.type == MapNode.Type.SHOP:
+				return
+	var candidates: Array[MapNode] = []
+	for r in range(1, CHOICE_ROWS - 1):
+		for node in rows[r]:
+			candidates.append(node)
+	if candidates.is_empty():
+		return
+	candidates[rng.randi_range(0, candidates.size() - 1)].type = MapNode.Type.SHOP
 
 
 static func _connect_rows(upper: Array, lower: Array) -> void:
@@ -162,7 +181,7 @@ static func from_dict(data: Dictionary) -> GameMap:
 		var node := MapNode.new()
 		node.id = int(raw.get("id", -1))
 		var type_value := int(raw.get("type", -1))
-		if type_value < 0 or type_value > int(MapNode.Type.BOSS):
+		if type_value < 0 or type_value > int(MapNode.Type.SHOP):
 			return null
 		node.type = type_value as MapNode.Type
 		node.row = int(raw.get("row", 0))

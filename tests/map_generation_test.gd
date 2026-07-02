@@ -22,6 +22,7 @@ func _run_tests() -> void:
 	_test_navigation()
 	_test_serialization_round_trip()
 	_test_from_dict_rejects_malformed()
+	_test_every_map_has_a_shop()
 	if failures == 0:
 		print("Map generation tests passed.")
 	call_deferred("_finish")
@@ -62,6 +63,8 @@ func _test_type_placement_rules() -> void:
 			_expect(node.type == MapNode.Type.REST, "Row 5 (pre-boss) must be all rest.")
 		if node.type == MapNode.Type.ELITE:
 			_expect(node.row >= 2 and node.row <= 4, "Elites only on rows 2-4.")
+		if node.type == MapNode.Type.SHOP:
+			_expect(node.row >= 1 and node.row <= 4, "Shops only on rows 1-4.")
 
 
 func _test_reachability_and_no_dead_ends() -> void:
@@ -118,6 +121,8 @@ func _test_enemy_ids_assigned() -> void:
 				_expect(node.enemy_id == BOSS_ID, "Boss node needs the boss enemy id.")
 			MapNode.Type.REST:
 				_expect(node.enemy_id == &"", "Rest node must have no enemy id.")
+			MapNode.Type.SHOP:
+				_expect(node.enemy_id == &"", "Shop node must have no enemy id.")
 
 
 func _test_seed_is_deterministic() -> void:
@@ -153,6 +158,18 @@ func _test_from_dict_rejects_malformed() -> void:
 	_expect(GameMap.from_dict({"nodes": [{"id": 0, "type": 99, "row": 0,
 		"column": 0, "edges": [], "enemy_id": ""}], "current_node_id": -1}) == null,
 		"An out-of-range node type must be rejected.")
+
+
+func _test_every_map_has_a_shop() -> void:
+	for seed_value in range(1, 31):
+		var rng := RandomNumberGenerator.new()
+		rng.seed = seed_value
+		var map := GameMap.generate(rng, NORMALS, ELITES, BOSS_ID)
+		var shops := 0
+		for node in map.nodes:
+			if node.type == MapNode.Type.SHOP:
+				shops += 1
+		_expect(shops >= 1, "Seed %d: every act must have at least one shop." % seed_value)
 
 
 func _expect(condition: bool, message: String) -> void:

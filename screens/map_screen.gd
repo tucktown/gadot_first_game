@@ -15,12 +15,14 @@ const TYPE_LETTER := {
 	MapNode.Type.ELITE: "E",
 	MapNode.Type.REST: "R",
 	MapNode.Type.BOSS: "B",
+	MapNode.Type.SHOP: "S",
 }
 const TYPE_COLOR := {
 	MapNode.Type.COMBAT: Color(0.85, 0.30, 0.28),
 	MapNode.Type.ELITE: Color(0.66, 0.40, 0.85),
 	MapNode.Type.REST: Color(0.40, 0.80, 0.50),
 	MapNode.Type.BOSS: Color(0.96, 0.79, 0.47),
+	MapNode.Type.SHOP: Color(0.45, 0.78, 0.85),
 }
 
 @onready var health_label: Label = %HealthLabel
@@ -44,6 +46,7 @@ func _build_legend() -> void:
 		[MapNode.Type.ELITE, "Elite (relic)"],
 		[MapNode.Type.REST, "Rest (heal 30%)"],
 		[MapNode.Type.BOSS, "Boss"],
+		[MapNode.Type.SHOP, "Shop (spend gold)"],
 	]:
 		var row := Label.new()
 		row.text = "%s  —  %s" % [TYPE_LETTER[pair[0]], pair[1]]
@@ -131,6 +134,8 @@ func _tooltip(node: MapNode) -> String:
 			return "Elite — %s" % _enemy_name(node)
 		MapNode.Type.BOSS:
 			return "Boss — %s" % _enemy_name(node)
+		MapNode.Type.SHOP:
+			return "Shop — buy cards, relics, removal"
 		_:
 			return "Combat — %s" % _enemy_name(node)
 
