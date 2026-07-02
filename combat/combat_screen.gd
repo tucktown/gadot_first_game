@@ -77,6 +77,8 @@ func _refresh_relic_bar() -> void:
 		var badge := Label.new()
 		badge.text = relic.display_name
 		badge.tooltip_text = relic.description
+		# Labels default to MOUSE_FILTER_IGNORE, which suppresses hover tooltips; opt in.
+		badge.mouse_filter = Control.MOUSE_FILTER_STOP
 		badge.add_theme_color_override("font_color", Color(0.96, 0.79, 0.47))
 		relic_bar.add_child(badge)
 

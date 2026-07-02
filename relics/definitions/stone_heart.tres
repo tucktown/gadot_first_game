@@ -6,5 +6,6 @@
 script = ExtResource("1")
 id = &"stone_heart"
 display_name = "Stone Heart"
-description = "Start each combat with 6 Block."
-magnitude = 6
+description = "Gain 3 Block at the start of each turn."
+trigger = 1
+magnitude = 3
