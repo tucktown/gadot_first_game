@@ -11,6 +11,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 @onready var encounter_label: Label = %EncounterLabel
 @onready var player_panel: PanelContainer = %PlayerPanel
 @onready var player_statuses: HBoxContainer = %PlayerStatuses
+@onready var relic_bar: HBoxContainer = %RelicBar
 @onready var enemy_statuses: HBoxContainer = %EnemyStatuses
 @onready var enemy_panel: PanelContainer = %EnemyPanel
 @onready var enemy_name_label: Label = %EnemyNameLabel
@@ -52,6 +53,7 @@ func _start_combat() -> void:
 		RunState.max_health,
 		5,
 		enemy,
+		RunState.relics,
 	)
 	message_label.text = "Choose a card to play."
 	input_locked = false
@@ -66,6 +68,17 @@ func _refresh_status_badges(box: HBoxContainer, status: StatusSet) -> void:
 		label.text = "%s %d" % [entry.label, entry.amount]
 		label.add_theme_color_override("font_color", _status_color(entry.kind))
 		box.add_child(label)
+
+
+func _refresh_relic_bar() -> void:
+	for child in relic_bar.get_children():
+		child.queue_free()
+	for relic in RunState.relics:
+		var badge := Label.new()
+		badge.text = relic.display_name
+		badge.tooltip_text = relic.description
+		badge.add_theme_color_override("font_color", Color(0.96, 0.79, 0.47))
+		relic_bar.add_child(badge)
 
 
 func _status_color(kind: String) -> Color:
@@ -99,13 +112,19 @@ func _refresh_combat_view(animate_health := true) -> void:
 	result_overlay.visible = state.phase in [CombatState.Phase.WON, CombatState.Phase.LOST]
 	if state.phase == CombatState.Phase.WON:
 		result_title.text = "VICTORY"
-		result_action_button.text = "Complete Run" if RunState.is_final_encounter() else "Choose Card Reward"
+		if RunState.is_final_encounter():
+			result_action_button.text = "Complete Run"
+		elif enemy.is_elite:
+			result_action_button.text = "Choose Relic"
+		else:
+			result_action_button.text = "Choose Card Reward"
 	elif state.phase == CombatState.Phase.LOST:
 		result_title.text = "DEFEAT"
 		result_action_button.text = "Start New Run"
 	_refresh_hand()
 	_refresh_status_badges(player_statuses, state.player_status)
 	_refresh_status_badges(enemy_statuses, state.enemy_status)
+	_refresh_relic_bar()
 
 
 func _refresh_hand() -> void:
@@ -251,6 +270,8 @@ func _on_result_action_button_pressed() -> void:
 		RunState.complete_combat(state.player_health)
 		if RunState.run_complete:
 			SceneTransition.transition_to("res://screens/run_complete.tscn")
+		elif RunState.awaiting_relic:
+			SceneTransition.transition_to("res://screens/relic_reward.tscn")
 		else:
 			SceneTransition.transition_to("res://screens/card_reward.tscn")
 	elif state.phase == CombatState.Phase.LOST:

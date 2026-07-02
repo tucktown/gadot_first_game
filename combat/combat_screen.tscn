@@ -223,6 +223,11 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
+[node name="RelicBar" type="HBoxContainer" parent="PlayerPanel/PlayerMargin/PlayerDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
 [node name="RightControls" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
