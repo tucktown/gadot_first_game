@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 const STRIKE_CARD := preload("res://cards/definitions/strike.tres")
 const DEFEND_CARD := preload("res://cards/definitions/defend.tres")
 const HEAVY_STRIKE_CARD := preload("res://cards/definitions/heavy_strike.tres")
@@ -66,6 +66,7 @@ const CARD_CATALOG := {
 
 var max_health: int = 50
 var current_health: int = 50
+var gold: int = 0
 var map: GameMap = null
 var _pending_node_id: int = -1   # node being fought/rested; transient, not serialized
 var deck: Array[CardData] = []
@@ -88,6 +89,7 @@ func start_new_run() -> void:
 		DEFEND_CARD,
 		HEAVY_STRIKE_CARD,
 	]
+	gold = 0
 	map = _generate_map()
 	_pending_node_id = -1
 	save_run()
@@ -116,10 +118,15 @@ func complete_combat(remaining_health: int) -> void:
 		push_error("complete_combat: no committable pending node (%d)." % _pending_node_id)
 		return
 	current_health = clampi(remaining_health, 0, max_health)
-	if node.type == MapNode.Type.ELITE or node.type == MapNode.Type.BOSS:
-		awaiting_relic = true
-	else:
-		awaiting_reward = true
+	match node.type:
+		MapNode.Type.ELITE:
+			awaiting_relic = true
+			add_gold(randi_range(25, 30))
+		MapNode.Type.BOSS:
+			awaiting_relic = true
+		_:
+			awaiting_reward = true
+			add_gold(randi_range(9, 15))
 	save_run()
 
 
@@ -133,6 +140,17 @@ func add_relic(relic: RelicData) -> void:
 	relics.append(relic)
 	awaiting_relic = false
 	save_run()
+
+
+func add_gold(amount: int) -> void:
+	gold = maxi(0, gold + amount)
+
+
+func spend_gold(amount: int) -> bool:
+	if amount < 0 or gold < amount:
+		return false
+	gold -= amount
+	return true
 
 
 func begin_node(id: int) -> MapNode:
@@ -198,6 +216,7 @@ func save_run() -> bool:
 	var save_data := {
 		"version": SAVE_VERSION,
 		"current_health": current_health,
+		"gold": gold,
 		"awaiting_reward": awaiting_reward,
 		"awaiting_relic": awaiting_relic,
 		"deck": card_ids,
@@ -261,6 +280,7 @@ func load_saved_run() -> bool:
 			return false
 
 	current_health = clampi(saved_health, 1, max_health)
+	gold = maxi(0, int(save_data.get("gold", 0)))
 	map = loaded_map
 	_pending_node_id = -1
 	awaiting_reward = bool(save_data.get("awaiting_reward", false))

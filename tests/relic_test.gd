@@ -82,7 +82,7 @@ func _test_relics_stack() -> void:
 func _test_relic_catalog_complete() -> void:
 	for id in [&"stone_heart", &"battle_fervor", &"everflow_battery", &"scrying_lens"]:
 		_expect(RunState.RELIC_CATALOG.has(id), "RELIC_CATALOG should contain %s." % id)
-	_expect(RunState.SAVE_VERSION == 4, "SAVE_VERSION should be 4.")
+	_expect(RunState.SAVE_VERSION == 5, "SAVE_VERSION should be 5.")
 
 
 func _test_relic_save_load_round_trip() -> void:

@@ -116,7 +116,7 @@ func _test_roster_loads_and_is_valid() -> void:
 func _test_run_ends_on_boss() -> void:
 	_expect(RunState.NORMAL_POOL.size() == 3, "Normal pool should have three enemies.")
 	_expect(RunState.BOSS_ENEMY == RunState.GRAVEMAW, "Boss enemy should be the Gravemaw.")
-	_expect(RunState.SAVE_VERSION == 4, "Save version should be bumped to 4.")
+	_expect(RunState.SAVE_VERSION == 5, "Save version should be bumped to 5.")
 
 
 func _move(name: String, damage: int, condition: EnemyMoveData.Condition, value: float, weight: int) -> EnemyMoveData:
