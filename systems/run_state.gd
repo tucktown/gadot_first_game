@@ -95,6 +95,9 @@ const CARD_CATALOG := {
 	&"flex_plus": FLEX_PLUS_CARD,
 	&"venom_cut_plus": VENOM_CUT_PLUS_CARD,
 }
+const SHOP_CARD_PRICE := 50
+const SHOP_REMOVE_PRICE := 75
+const SHOP_RELIC_PRICE := 140
 
 var max_health: int = 50
 var current_health: int = 50
@@ -172,6 +175,60 @@ func add_relic(relic: RelicData) -> void:
 	relics.append(relic)
 	awaiting_relic = false
 	save_run()
+
+
+func upgrade_card(deck_index: int) -> bool:
+	if deck_index < 0 or deck_index >= deck.size():
+		return false
+	var card := deck[deck_index]
+	if card.upgrade_id == &"" or not CARD_CATALOG.has(card.upgrade_id):
+		return false
+	deck[deck_index] = CARD_CATALOG[card.upgrade_id]
+	save_run()
+	return true
+
+
+func purchase_removal(deck_index: int) -> bool:
+	if deck.size() <= 1 or deck_index < 0 or deck_index >= deck.size():
+		return false
+	if not spend_gold(SHOP_REMOVE_PRICE):
+		return false
+	deck.remove_at(deck_index)
+	save_run()
+	return true
+
+
+func buy_card(def: CardData) -> bool:
+	if not spend_gold(SHOP_CARD_PRICE):
+		return false
+	deck.append(def)
+	save_run()
+	return true
+
+
+func buy_relic(relic: RelicData) -> bool:
+	if not spend_gold(SHOP_RELIC_PRICE):
+		return false
+	relics.append(relic)
+	save_run()
+	return true
+
+
+func heal_rest() -> void:
+	var heal := int(ceil(max_health * 0.30))
+	current_health = clampi(current_health + heal, 0, max_health)
+	save_run()
+
+
+func commit_pending_node() -> bool:
+	if map == null:
+		return false
+	var node := map.get_node_by_id(_pending_node_id)
+	if node == null or not map.enter(_pending_node_id):
+		push_error("commit_pending_node: no committable pending node (%d)." % _pending_node_id)
+		return false
+	save_run()
+	return true
 
 
 func add_gold(amount: int) -> void:
