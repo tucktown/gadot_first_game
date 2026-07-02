@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://screens/shop_screen.gd" id="1"]
+
+[node name="ShopScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.055, 0.071, 0.11, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+text = "Shop"
+
+[node name="GoldLabel" type="Label" parent="Margin/Content/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 28
+text = "Gold: 0"
+
+[node name="CardsLabel" type="Label" parent="Margin/Content"]
+layout_mode = 2
+text = "Cards"
+
+[node name="CardRow" type="HBoxContainer" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="RelicsLabel" type="Label" parent="Margin/Content"]
+layout_mode = 2
+text = "Relics"
+
+[node name="RelicRow" type="HBoxContainer" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Footer" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="RemoveButton" type="Button" parent="Margin/Content/Footer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Remove a card (75)"
+
+[node name="LeaveButton" type="Button" parent="Margin/Content/Footer"]
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Leave"
+
+[connection signal="pressed" from="Margin/Content/Footer/RemoveButton" to="." method="_on_remove_button_pressed"]
+[connection signal="pressed" from="Margin/Content/Footer/LeaveButton" to="." method="_on_leave_button_pressed"]
