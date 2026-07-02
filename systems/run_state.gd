@@ -93,8 +93,12 @@ func complete_combat(remaining_health: int) -> void:
 		run_complete = true
 		clear_saved_run()
 	else:
+		var beaten := get_current_enemy()
 		encounter_number += 1
-		awaiting_reward = true
+		if beaten.is_elite:
+			awaiting_relic = true
+		else:
+			awaiting_reward = true
 		save_run()
 
 
@@ -124,7 +128,11 @@ func has_saved_run() -> bool:
 
 
 func get_resume_scene() -> String:
-	return "res://screens/card_reward.tscn" if awaiting_reward else "res://combat/combat_screen.tscn"
+	if awaiting_relic:
+		return "res://screens/relic_reward.tscn"
+	if awaiting_reward:
+		return "res://screens/card_reward.tscn"
+	return "res://combat/combat_screen.tscn"
 
 
 func save_run() -> bool:

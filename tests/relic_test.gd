@@ -19,6 +19,8 @@ func _run_tests() -> void:
 	_test_relic_catalog_complete()
 	_test_relic_save_load_round_trip()
 	_test_unknown_relic_id_invalidates_save()
+	_test_elite_win_awaits_relic()
+	_test_normal_win_awaits_card()
 	if failures == 0:
 		print("Relic tests passed.")
 	_restore_save()
@@ -119,6 +121,28 @@ func _test_unknown_relic_id_invalidates_save() -> void:
 	var ok: bool = run_state.load_saved_run()
 	_expect(not ok, "An unknown relic id must invalidate the save.")
 	_expect(not SaveManager.has_run(), "Invalid save should be cleared.")
+
+
+func _test_elite_win_awaits_relic() -> void:
+	var run_state := _run_state()
+	run_state.start_new_run()
+	# Dread Sentinel is ENCOUNTERS index 2 -> encounter_number 3.
+	run_state.encounter_number = 3
+	_expect(run_state.get_current_enemy().is_elite, "Dread Sentinel should be flagged as elite.")
+	run_state.complete_combat(30)
+	_expect(run_state.awaiting_relic, "Beating the elite should set awaiting_relic.")
+	_expect(not run_state.awaiting_reward, "Elite win should not set the card-reward flag.")
+	_expect(run_state.get_resume_scene() == "res://screens/relic_reward.tscn",
+		"awaiting_relic should resume to the relic-reward scene.")
+
+
+func _test_normal_win_awaits_card() -> void:
+	var run_state := _run_state()
+	run_state.start_new_run()
+	run_state.encounter_number = 1  # Cinder Hound, not elite
+	run_state.complete_combat(30)
+	_expect(run_state.awaiting_reward, "Beating a normal enemy should set awaiting_reward.")
+	_expect(not run_state.awaiting_relic, "Normal win should not set the relic flag.")
 
 
 func _run_state() -> Node:
