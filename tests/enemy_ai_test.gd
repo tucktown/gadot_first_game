@@ -114,9 +114,9 @@ func _test_roster_loads_and_is_valid() -> void:
 
 
 func _test_run_ends_on_boss() -> void:
-	_expect(RunState.ENCOUNTERS.size() == 5, "Run should have 5 encounters.")
-	_expect(RunState.ENCOUNTERS[4] == RunState.GRAVEMAW, "Final encounter should be the boss.")
-	_expect(RunState.SAVE_VERSION == 3, "Save version should be bumped to 3.")
+	_expect(RunState.NORMAL_POOL.size() == 3, "Normal pool should have three enemies.")
+	_expect(RunState.BOSS_ENEMY == RunState.GRAVEMAW, "Boss enemy should be the Gravemaw.")
+	_expect(RunState.SAVE_VERSION == 4, "Save version should be bumped to 4.")
 
 
 func _move(name: String, damage: int, condition: EnemyMoveData.Condition, value: float, weight: int) -> EnemyMoveData:

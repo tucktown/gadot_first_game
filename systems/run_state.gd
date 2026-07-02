@@ -1,6 +1,6 @@
 extends Node
 
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 const STRIKE_CARD := preload("res://cards/definitions/strike.tres")
 const DEFEND_CARD := preload("res://cards/definitions/defend.tres")
 const HEAVY_STRIKE_CARD := preload("res://cards/definitions/heavy_strike.tres")
@@ -35,7 +35,16 @@ const RELIC_CATALOG := {
 	&"everflow_battery": EVERFLOW_BATTERY,
 	&"scrying_lens": SCRYING_LENS,
 }
-const ENCOUNTERS: Array[EnemyData] = [CINDER_HOUND, PLAGUE_CRAWLER, DREAD_SENTINEL, BONE_ACOLYTE, GRAVEMAW]
+const ENEMY_CATALOG := {
+	&"cinder_hound": CINDER_HOUND,
+	&"plague_crawler": PLAGUE_CRAWLER,
+	&"bone_acolyte": BONE_ACOLYTE,
+	&"dread_sentinel": DREAD_SENTINEL,
+	&"gravemaw": GRAVEMAW,
+}
+const NORMAL_POOL: Array[EnemyData] = [CINDER_HOUND, PLAGUE_CRAWLER, BONE_ACOLYTE]
+const ELITE_POOL: Array[EnemyData] = [DREAD_SENTINEL]
+const BOSS_ENEMY := GRAVEMAW
 const CARD_CATALOG := {
 	&"strike": STRIKE_CARD,
 	&"defend": DEFEND_CARD,
@@ -57,7 +66,8 @@ const CARD_CATALOG := {
 
 var max_health: int = 50
 var current_health: int = 50
-var encounter_number: int = 1
+var map: GameMap = null
+var _pending_node_id: int = -1   # node being fought/rested; transient, not serialized
 var deck: Array[CardData] = []
 var run_complete := false
 var awaiting_reward := false
@@ -67,7 +77,6 @@ var awaiting_relic := false
 
 func start_new_run() -> void:
 	current_health = max_health
-	encounter_number = 1
 	run_complete = false
 	awaiting_reward = false
 	awaiting_relic = false
@@ -79,7 +88,21 @@ func start_new_run() -> void:
 		DEFEND_CARD,
 		HEAVY_STRIKE_CARD,
 	]
+	map = _generate_map()
+	_pending_node_id = -1
 	save_run()
+
+
+func _generate_map() -> GameMap:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var normal_ids: Array[StringName] = []
+	for enemy in NORMAL_POOL:
+		normal_ids.append(enemy.id)
+	var elite_ids: Array[StringName] = []
+	for enemy in ELITE_POOL:
+		elite_ids.append(enemy.id)
+	return GameMap.generate(rng, normal_ids, elite_ids, BOSS_ENEMY.id)
 
 
 func ensure_run_started() -> void:
@@ -89,17 +112,13 @@ func ensure_run_started() -> void:
 
 func complete_combat(remaining_health: int) -> void:
 	current_health = clampi(remaining_health, 0, max_health)
-	if encounter_number >= ENCOUNTERS.size():
-		run_complete = true
-		clear_saved_run()
+	map.enter(_pending_node_id)   # commit the fought node as the new position
+	var node := map.get_node_by_id(_pending_node_id)
+	if node.type == MapNode.Type.ELITE or node.type == MapNode.Type.BOSS:
+		awaiting_relic = true
 	else:
-		var beaten := get_current_enemy()
-		encounter_number += 1
-		if beaten.is_elite:
-			awaiting_relic = true
-		else:
-			awaiting_reward = true
-		save_run()
+		awaiting_reward = true
+	save_run()
 
 
 func add_card(card: CardData) -> void:
@@ -114,13 +133,35 @@ func add_relic(relic: RelicData) -> void:
 	save_run()
 
 
+func begin_node(id: int) -> MapNode:
+	_pending_node_id = id
+	return map.get_node_by_id(id)
+
+
+func apply_rest() -> void:
+	map.enter(_pending_node_id)
+	var heal := int(ceil(max_health * 0.30))
+	current_health = clampi(current_health + heal, 0, max_health)
+	save_run()
+
+
 func get_current_enemy() -> EnemyData:
-	var index := clampi(encounter_number - 1, 0, ENCOUNTERS.size() - 1)
-	return ENCOUNTERS[index]
+	var node := map.get_node_by_id(_pending_node_id)
+	return ENEMY_CATALOG.get(node.enemy_id, null)
 
 
-func is_final_encounter() -> bool:
-	return encounter_number >= ENCOUNTERS.size()
+func is_pending_boss() -> bool:
+	if map == null or _pending_node_id == -1:
+		return false
+	var node := map.get_node_by_id(_pending_node_id)
+	return node != null and node.type == MapNode.Type.BOSS
+
+
+func is_current_node_boss() -> bool:
+	if map == null or map.current_node_id == -1:
+		return false
+	var node := map.get_node_by_id(map.current_node_id)
+	return node != null and node.type == MapNode.Type.BOSS
 
 
 func has_saved_run() -> bool:
@@ -132,7 +173,7 @@ func get_resume_scene() -> String:
 		return "res://screens/relic_reward.tscn"
 	if awaiting_reward:
 		return "res://screens/card_reward.tscn"
-	return "res://combat/combat_screen.tscn"
+	return "res://screens/map_screen.tscn"
 
 
 func save_run() -> bool:
@@ -147,11 +188,11 @@ func save_run() -> bool:
 	var save_data := {
 		"version": SAVE_VERSION,
 		"current_health": current_health,
-		"encounter_number": encounter_number,
 		"awaiting_reward": awaiting_reward,
 		"awaiting_relic": awaiting_relic,
 		"deck": card_ids,
 		"relics": relic_ids,
+		"map": map.to_dict() if map != null else {},
 	}
 	var error := SaveManager.save_run(save_data)
 	if error != OK:
@@ -192,13 +233,26 @@ func load_saved_run() -> bool:
 		loaded_relics.append(RELIC_CATALOG[relic_id])
 
 	var saved_health := int(save_data.get("current_health", 0))
-	var saved_encounter := int(save_data.get("encounter_number", 0))
-	if saved_health <= 0 or saved_encounter < 1 or saved_encounter > ENCOUNTERS.size():
+	if saved_health <= 0:
 		clear_saved_run()
 		return false
 
+	var raw_map: Variant = save_data.get("map", {})
+	if typeof(raw_map) != TYPE_DICTIONARY:
+		clear_saved_run()
+		return false
+	var loaded_map := GameMap.from_dict(raw_map)
+	if loaded_map == null:
+		clear_saved_run()
+		return false
+	for node in loaded_map.nodes:
+		if node.enemy_id != &"" and not ENEMY_CATALOG.has(node.enemy_id):
+			clear_saved_run()
+			return false
+
 	current_health = clampi(saved_health, 1, max_health)
-	encounter_number = saved_encounter
+	map = loaded_map
+	_pending_node_id = -1
 	awaiting_reward = bool(save_data.get("awaiting_reward", false))
 	deck = loaded_deck
 	relics = loaded_relics

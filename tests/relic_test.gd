@@ -80,7 +80,7 @@ func _test_relics_stack() -> void:
 func _test_relic_catalog_complete() -> void:
 	for id in [&"stone_heart", &"battle_fervor", &"everflow_battery", &"scrying_lens"]:
 		_expect(RunState.RELIC_CATALOG.has(id), "RELIC_CATALOG should contain %s." % id)
-	_expect(RunState.SAVE_VERSION == 3, "SAVE_VERSION should be 3.")
+	_expect(RunState.SAVE_VERSION == 4, "SAVE_VERSION should be 4.")
 
 
 func _test_relic_save_load_round_trip() -> void:
@@ -111,11 +111,11 @@ func _test_unknown_relic_id_invalidates_save() -> void:
 	var data := {
 		"version": RunState.SAVE_VERSION,
 		"current_health": 40,
-		"encounter_number": 1,
 		"awaiting_reward": false,
 		"awaiting_relic": false,
 		"deck": ["strike", "strike", "defend", "defend", "heavy_strike"],
 		"relics": ["not_a_real_relic"],
+		"map": _run_state().map.to_dict(),
 	}
 	SaveManager.save_run(data)
 	var ok: bool = run_state.load_saved_run()
@@ -126,8 +126,9 @@ func _test_unknown_relic_id_invalidates_save() -> void:
 func _test_elite_win_awaits_relic() -> void:
 	var run_state := _run_state()
 	run_state.start_new_run()
-	# Dread Sentinel is ENCOUNTERS index 2 -> encounter_number 3.
-	run_state.encounter_number = 3
+	# Elite nodes only exist on rows 2-4; a fresh map may or may not roll one.
+	# Force a deterministic elite by entering a hand-built pending node instead.
+	_enter_type(run_state, MapNode.Type.ELITE, &"dread_sentinel")
 	_expect(run_state.get_current_enemy().is_elite, "Dread Sentinel should be flagged as elite.")
 	run_state.complete_combat(30)
 	_expect(run_state.awaiting_relic, "Beating the elite should set awaiting_relic.")
@@ -139,10 +140,22 @@ func _test_elite_win_awaits_relic() -> void:
 func _test_normal_win_awaits_card() -> void:
 	var run_state := _run_state()
 	run_state.start_new_run()
-	run_state.encounter_number = 1  # Cinder Hound, not elite
+	_enter_type(run_state, MapNode.Type.COMBAT, &"cinder_hound")
 	run_state.complete_combat(30)
 	_expect(run_state.awaiting_reward, "Beating a normal enemy should set awaiting_reward.")
 	_expect(not run_state.awaiting_relic, "Normal win should not set the relic flag.")
+	_expect(run_state.get_resume_scene() == "res://screens/card_reward.tscn",
+		"A pending card reward must resume into the card-reward screen (not skip to the map).")
+
+
+# Enters an available node, then rewrites it to the wanted type/enemy so the
+# win-routing branches can be exercised without depending on random layout.
+func _enter_type(run_state: Node, type: MapNode.Type, enemy_id: StringName) -> void:
+	var start_id: int = run_state.map.get_available_node_ids()[0]
+	var node: MapNode = run_state.map.get_node_by_id(start_id)
+	node.type = type
+	node.enemy_id = enemy_id
+	run_state.begin_node(start_id)
 
 
 func _run_state() -> Node:
