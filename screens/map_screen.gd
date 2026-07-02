@@ -26,6 +26,7 @@ const TYPE_COLOR := {
 }
 
 @onready var health_label: Label = %HealthLabel
+@onready var gold_label: Label = %GoldLabel
 @onready var legend: VBoxContainer = %Legend
 
 var _node_buttons: Dictionary = {}   # id -> Button
@@ -36,6 +37,7 @@ func _ready() -> void:
 	RunState.ensure_run_started()
 	AudioManager.play_game_music()
 	health_label.text = "Health: %d / %d" % [RunState.current_health, RunState.max_health]
+	gold_label.text = "Gold: %d" % RunState.gold
 	_build_legend()
 	_build_map()
 
@@ -148,11 +150,15 @@ func _enemy_name(node: MapNode) -> String:
 func _on_node_pressed(id: int) -> void:
 	AudioManager.play_ui_click()
 	var node := RunState.begin_node(id)
-	if node.type == MapNode.Type.REST:
-		RunState.apply_rest()
-		SceneTransition.transition_to("res://screens/map_screen.tscn")   # reload to refresh
-	else:
-		SceneTransition.transition_to("res://combat/combat_screen.tscn")
+	match node.type:
+		MapNode.Type.REST:
+			RunState.commit_pending_node()
+			SceneTransition.transition_to("res://screens/rest_screen.tscn")
+		MapNode.Type.SHOP:
+			RunState.commit_pending_node()
+			SceneTransition.transition_to("res://screens/shop_screen.tscn")
+		_:
+			SceneTransition.transition_to("res://combat/combat_screen.tscn")
 
 
 func _on_view_deck_button_pressed() -> void:

@@ -99,7 +99,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	_set_bar_value(player_health_bar, state.player_health, animate_health, true)
 	player_block_label.text = "Block: %d" % state.player_block
 	energy_label.text = "Energy: %d / %d" % [state.energy, state.max_energy]
-	encounter_label.text = "Deck: %d cards" % RunState.deck.size()
+	encounter_label.text = "Gold: %d  |  Deck: %d cards" % [RunState.gold, RunState.deck.size()]
 	enemy_name_label.text = enemy.display_name
 	enemy_art.texture = enemy.artwork
 	enemy_health_label.text = "Health: %d / %d" % [state.enemy_health, state.enemy_max_health]

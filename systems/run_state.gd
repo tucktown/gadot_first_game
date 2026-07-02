@@ -247,16 +247,6 @@ func begin_node(id: int) -> MapNode:
 	return map.get_node_by_id(id)
 
 
-func apply_rest() -> void:
-	var node := map.get_node_by_id(_pending_node_id) if map != null else null
-	if node == null or not map.enter(_pending_node_id):
-		push_error("apply_rest: no committable pending node (%d)." % _pending_node_id)
-		return
-	var heal := int(ceil(max_health * 0.30))
-	current_health = clampi(current_health + heal, 0, max_health)
-	save_run()
-
-
 func get_current_enemy() -> EnemyData:
 	var node := map.get_node_by_id(_pending_node_id)
 	return ENEMY_CATALOG.get(node.enemy_id, null)
