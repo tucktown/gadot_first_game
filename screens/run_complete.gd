@@ -6,6 +6,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 
 
 func _ready() -> void:
+	RunState.clear_saved_run()
 	RunState.ensure_run_started()
 	summary_label.text = "You conquered the map with %d health and a %d-card deck." % [
 		RunState.current_health,

@@ -22,6 +22,7 @@ func _run_tests() -> void:
 	_test_unknown_enemy_id_invalidates_save()
 	_test_elite_win_awaits_relic()
 	_test_normal_win_awaits_card()
+	_test_boss_committed_resumes_to_run_complete()
 	if failures == 0:
 		print("Relic tests passed.")
 	_restore_save()
@@ -171,6 +172,23 @@ func _test_normal_win_awaits_card() -> void:
 	_expect(not run_state.awaiting_relic, "Normal win should not set the relic flag.")
 	_expect(run_state.get_resume_scene() == "res://screens/card_reward.tscn",
 		"A pending card reward must resume into the card-reward screen (not skip to the map).")
+
+
+func _test_boss_committed_resumes_to_run_complete() -> void:
+	var run_state := _run_state()
+	run_state.start_new_run()
+	# Simulate having beaten the boss and claimed its relic: commit the boss node
+	# with no pending reward flags.
+	var boss_id := -1
+	for node in run_state.map.nodes:
+		if node.type == MapNode.Type.BOSS:
+			boss_id = node.id
+	run_state.map.current_node_id = boss_id
+	run_state.awaiting_reward = false
+	run_state.awaiting_relic = false
+	_expect(run_state.is_current_node_boss(), "Boss node should be the committed current node.")
+	_expect(run_state.get_resume_scene() == "res://screens/run_complete.tscn",
+		"A committed boss with no pending reward must resume to run-complete, not a dead map.")
 
 
 # Enters an available node, then rewrites it to the wanted type/enemy so the

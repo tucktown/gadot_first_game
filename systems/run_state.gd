@@ -178,6 +178,11 @@ func get_resume_scene() -> String:
 		return "res://screens/relic_reward.tscn"
 	if awaiting_reward:
 		return "res://screens/card_reward.tscn"
+	if is_current_node_boss():
+		# Boss committed, relic already claimed: the boss node is edgeless, so the
+		# map has no available nodes. Route to run-complete instead of a dead map
+		# (covers leaving the relic screen via Main Menu / quit before Continue).
+		return "res://screens/run_complete.tscn"
 	return "res://screens/map_screen.tscn"
 
 
