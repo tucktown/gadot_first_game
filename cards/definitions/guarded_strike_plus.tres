@@ -5,13 +5,12 @@
 
 [resource]
 script = ExtResource("1")
-id = &"guarded_strike"
-display_name = "Guarded Strike"
-description = "Deal 3 damage. Gain 3 block. Draw 1 card."
+id = &"guarded_strike_plus"
+display_name = "Guarded Strike+"
+description = "Deal 5 damage. Gain 5 block. Draw 1 card."
 energy_cost = 1
 target = 2
-damage = 3
-block = 3
+damage = 5
+block = 5
 cards_drawn = 1
-upgrade_id = &"guarded_strike_plus"
 artwork = ExtResource("2")

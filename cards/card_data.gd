@@ -27,6 +27,7 @@ enum Target {
 @export_range(0, 99) var weak_applied: int = 0
 @export_range(0, 99) var poison_applied: int = 0
 @export_range(0, 99) var strength_gained: int = 0
+@export var upgrade_id: StringName    # this card's + version; &"" = not upgradable
 
 @export_category("Presentation")
 @export var artwork: Texture2D

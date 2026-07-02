@@ -1,13 +1,12 @@
-[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://y33io1k5jt6j"]
+[gd_resource type="Resource" script_class="CardData" format=3]
 
 [ext_resource type="Script" uid="uid://bko53m7e8lrek" path="res://cards/card_data.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://5yo2vjjw61m0" path="res://assets/art/cards/expose.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"expose"
-display_name = "Expose"
-description = "Apply 2 Vulnerable to the enemy."
-vulnerable_applied = 2
-upgrade_id = &"expose_plus"
+id = &"expose_plus"
+display_name = "Expose+"
+description = "Apply 3 Vulnerable to the enemy."
+vulnerable_applied = 3
 artwork = ExtResource("2")

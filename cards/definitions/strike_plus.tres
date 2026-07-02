@@ -5,11 +5,10 @@
 
 [resource]
 script = ExtResource("1")
-id = &"strike"
-display_name = "Strike"
-description = "Deal 6 damage."
+id = &"strike_plus"
+display_name = "Strike+"
+description = "Deal 9 damage."
 energy_cost = 1
 target = 2
-damage = 6
-upgrade_id = &"strike_plus"
+damage = 9
 artwork = ExtResource("2")

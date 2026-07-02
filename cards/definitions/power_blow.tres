@@ -12,4 +12,5 @@ energy_cost = 2
 target = 2
 damage = 14
 energy_gained = 1
+upgrade_id = &"power_blow_plus"
 artwork = ExtResource("2")

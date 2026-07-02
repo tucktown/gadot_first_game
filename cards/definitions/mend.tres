@@ -11,4 +11,5 @@ description = "Restore 5 health."
 energy_cost = 1
 target = 1
 heal = 5
+upgrade_id = &"mend_plus"
 artwork = ExtResource("2")

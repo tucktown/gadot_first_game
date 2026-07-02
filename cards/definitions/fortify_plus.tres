@@ -5,12 +5,11 @@
 
 [resource]
 script = ExtResource("1")
-id = &"fortify"
-display_name = "Fortify"
-description = "Gain 4 block. Retain unspent block next turn."
+id = &"fortify_plus"
+display_name = "Fortify+"
+description = "Gain 7 block. Retain unspent block next turn."
 energy_cost = 1
 target = 1
-block = 4
+block = 7
 retains_block = true
-upgrade_id = &"fortify_plus"
 artwork = ExtResource("2")

@@ -13,4 +13,5 @@ target = 2
 damage = 5
 cards_drawn = 1
 energy_gained = 1
+upgrade_id = &"rally_plus"
 artwork = ExtResource("2")

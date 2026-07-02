@@ -5,11 +5,10 @@
 
 [resource]
 script = ExtResource("1")
-id = &"quick_guard"
-display_name = "Quick Guard"
-description = "Gain 3 block."
+id = &"quick_guard_plus"
+display_name = "Quick Guard+"
+description = "Gain 6 block."
 energy_cost = 0
 target = 1
-block = 3
-upgrade_id = &"quick_guard_plus"
+block = 6
 artwork = ExtResource("2")

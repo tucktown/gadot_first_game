@@ -11,4 +11,5 @@ description = "Gain 5 block."
 energy_cost = 1
 target = 1
 block = 5
+upgrade_id = &"defend_plus"
 artwork = ExtResource("2")

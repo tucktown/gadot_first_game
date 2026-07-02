@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://cards/card_data.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/art/cards/heavy_strike.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/art/cards/power_blow.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"heavy_strike"
-display_name = "Heavy Strike"
-description = "Deal 10 damage."
+id = &"power_blow_plus"
+display_name = "Power Blow+"
+description = "Deal 18 damage. Gain 1 energy."
 energy_cost = 2
 target = 2
-damage = 10
-upgrade_id = &"heavy_strike_plus"
+damage = 18
+energy_gained = 1
 artwork = ExtResource("2")

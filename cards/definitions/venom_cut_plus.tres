@@ -1,14 +1,13 @@
-[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://whica3emrw4x"]
+[gd_resource type="Resource" script_class="CardData" format=3]
 
 [ext_resource type="Script" uid="uid://bko53m7e8lrek" path="res://cards/card_data.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://db347jrvoilkk" path="res://assets/art/cards/venom_cut.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"venom_cut"
-display_name = "Venom Cut"
-description = "Deal 4 damage. Apply 3 Poison."
-damage = 4
-poison_applied = 3
-upgrade_id = &"venom_cut_plus"
+id = &"venom_cut_plus"
+display_name = "Venom Cut+"
+description = "Deal 6 damage. Apply 4 Poison."
+damage = 6
+poison_applied = 4
 artwork = ExtResource("2")

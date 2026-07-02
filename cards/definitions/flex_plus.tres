@@ -1,14 +1,13 @@
-[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://ds1wf1xhxse11"]
+[gd_resource type="Resource" script_class="CardData" format=3]
 
 [ext_resource type="Script" uid="uid://bko53m7e8lrek" path="res://cards/card_data.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://mxoayuuju2tm" path="res://assets/art/cards/flex.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"flex"
-display_name = "Flex"
-description = "Gain 2 Strength."
+id = &"flex_plus"
+display_name = "Flex+"
+description = "Gain 3 Strength."
 target = 1
-strength_gained = 2
-upgrade_id = &"flex_plus"
+strength_gained = 3
 artwork = ExtResource("2")

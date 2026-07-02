@@ -1,13 +1,12 @@
-[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://vj1t8dva445j"]
+[gd_resource type="Resource" script_class="CardData" format=3]
 
 [ext_resource type="Script" uid="uid://bko53m7e8lrek" path="res://cards/card_data.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://p3fntmu8bun" path="res://assets/art/cards/sap.png" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = &"sap"
-display_name = "Sap"
-description = "Apply 2 Weak to the enemy."
-weak_applied = 2
-upgrade_id = &"sap_plus"
+id = &"sap_plus"
+display_name = "Sap+"
+description = "Apply 3 Weak to the enemy."
+weak_applied = 3
 artwork = ExtResource("2")

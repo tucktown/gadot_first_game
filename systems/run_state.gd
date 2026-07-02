@@ -17,6 +17,22 @@ const EXPOSE_CARD := preload("res://cards/definitions/expose.tres")
 const SAP_CARD := preload("res://cards/definitions/sap.tres")
 const FLEX_CARD := preload("res://cards/definitions/flex.tres")
 const VENOM_CUT_CARD := preload("res://cards/definitions/venom_cut.tres")
+const STRIKE_PLUS_CARD := preload("res://cards/definitions/strike_plus.tres")
+const DEFEND_PLUS_CARD := preload("res://cards/definitions/defend_plus.tres")
+const HEAVY_STRIKE_PLUS_CARD := preload("res://cards/definitions/heavy_strike_plus.tres")
+const GUARDED_STRIKE_PLUS_CARD := preload("res://cards/definitions/guarded_strike_plus.tres")
+const POWER_BLOW_PLUS_CARD := preload("res://cards/definitions/power_blow_plus.tres")
+const QUICK_GUARD_PLUS_CARD := preload("res://cards/definitions/quick_guard_plus.tres")
+const FORTIFY_PLUS_CARD := preload("res://cards/definitions/fortify_plus.tres")
+const SECOND_WIND_PLUS_CARD := preload("res://cards/definitions/second_wind_plus.tres")
+const DEVOUR_PLUS_CARD := preload("res://cards/definitions/devour_plus.tres")
+const MEND_PLUS_CARD := preload("res://cards/definitions/mend_plus.tres")
+const BULWARK_PLUS_CARD := preload("res://cards/definitions/bulwark_plus.tres")
+const RALLY_PLUS_CARD := preload("res://cards/definitions/rally_plus.tres")
+const EXPOSE_PLUS_CARD := preload("res://cards/definitions/expose_plus.tres")
+const SAP_PLUS_CARD := preload("res://cards/definitions/sap_plus.tres")
+const FLEX_PLUS_CARD := preload("res://cards/definitions/flex_plus.tres")
+const VENOM_CUT_PLUS_CARD := preload("res://cards/definitions/venom_cut_plus.tres")
 const TRAINING_DUMMY := preload("res://enemies/definitions/training_dummy.tres")
 const RAIDER := preload("res://enemies/definitions/raider.tres")
 const GUARDIAN := preload("res://enemies/definitions/guardian.tres")
@@ -62,6 +78,22 @@ const CARD_CATALOG := {
 	&"sap": SAP_CARD,
 	&"flex": FLEX_CARD,
 	&"venom_cut": VENOM_CUT_CARD,
+	&"strike_plus": STRIKE_PLUS_CARD,
+	&"defend_plus": DEFEND_PLUS_CARD,
+	&"heavy_strike_plus": HEAVY_STRIKE_PLUS_CARD,
+	&"guarded_strike_plus": GUARDED_STRIKE_PLUS_CARD,
+	&"power_blow_plus": POWER_BLOW_PLUS_CARD,
+	&"quick_guard_plus": QUICK_GUARD_PLUS_CARD,
+	&"fortify_plus": FORTIFY_PLUS_CARD,
+	&"second_wind_plus": SECOND_WIND_PLUS_CARD,
+	&"devour_plus": DEVOUR_PLUS_CARD,
+	&"mend_plus": MEND_PLUS_CARD,
+	&"bulwark_plus": BULWARK_PLUS_CARD,
+	&"rally_plus": RALLY_PLUS_CARD,
+	&"expose_plus": EXPOSE_PLUS_CARD,
+	&"sap_plus": SAP_PLUS_CARD,
+	&"flex_plus": FLEX_PLUS_CARD,
+	&"venom_cut_plus": VENOM_CUT_PLUS_CARD,
 }
 
 var max_health: int = 50
