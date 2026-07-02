@@ -544,8 +544,8 @@ func _test_normal_win_awaits_card() -> void:
 	run_state.complete_combat(30)
 	_expect(run_state.awaiting_reward, "Beating a normal enemy should set awaiting_reward.")
 	_expect(not run_state.awaiting_relic, "Normal win should not set the relic flag.")
-	_expect(run_state.get_resume_scene() == "res://screens/map_screen.tscn",
-		"After a card reward is pending, resume goes through the reward then the map.")
+	_expect(run_state.get_resume_scene() == "res://screens/card_reward.tscn",
+		"A pending card reward must resume into the card-reward screen (not skip to the map).")
 
 
 # Enters an available node, then rewrites it to the wanted type/enemy so the
@@ -705,6 +705,11 @@ func get_resume_scene() -> String:
 		return "res://screens/relic_reward.tscn"
 	if awaiting_reward:
 		return "res://screens/card_reward.tscn"
+	if is_current_node_boss():
+		# Boss committed, relic already claimed: the boss node is edgeless, so the
+		# map has no available nodes. Route to run-complete instead of a dead map
+		# (covers leaving the relic screen via Main Menu / quit before Continue).
+		return "res://screens/run_complete.tscn"
 	return "res://screens/map_screen.tscn"
 ```
 
@@ -1130,6 +1135,9 @@ func _on_start_pressed() -> void:
 In `screens/run_complete.gd`, replace the summary text (lines 10–13) and `_on_new_run_button_pressed` (lines 16–18):
 
 ```gdscript
+	# Reaching this screen ends the run — clear any lingering save so Continue
+	# doesn't reappear (idempotent; the relic-screen path may already have cleared).
+	RunState.clear_saved_run()
 	summary_label.text = "You conquered the map with %d health and a %d-card deck." % [
 		RunState.current_health,
 		RunState.deck.size(),
