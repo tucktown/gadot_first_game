@@ -16,7 +16,7 @@ func _ready() -> void:
 func _on_start_pressed() -> void:
 	AudioManager.play_ui_click()
 	RunState.start_new_run()
-	SceneTransition.transition_to("res://combat/combat_screen.tscn")
+	SceneTransition.transition_to("res://screens/map_screen.tscn")
 
 
 func _on_continue_pressed() -> void:

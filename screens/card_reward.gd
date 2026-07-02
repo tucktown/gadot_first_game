@@ -57,7 +57,7 @@ func _on_reward_selected(card: CardInstance) -> void:
 
 func _on_continue_button_pressed() -> void:
 	if reward_chosen:
-		SceneTransition.transition_to("res://combat/combat_screen.tscn")
+		SceneTransition.transition_to("res://screens/map_screen.tscn")
 
 
 func _on_main_menu_button_pressed() -> void:

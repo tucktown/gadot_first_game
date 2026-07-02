@@ -99,7 +99,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	_set_bar_value(player_health_bar, state.player_health, animate_health, true)
 	player_block_label.text = "Block: %d" % state.player_block
 	energy_label.text = "Energy: %d / %d" % [state.energy, state.max_energy]
-	encounter_label.text = "Encounter %d  |  Deck: %d" % [RunState.encounter_number, RunState.deck.size()]
+	encounter_label.text = "Deck: %d cards" % RunState.deck.size()
 	enemy_name_label.text = enemy.display_name
 	enemy_art.texture = enemy.artwork
 	enemy_health_label.text = "Health: %d / %d" % [state.enemy_health, state.enemy_max_health]
@@ -114,9 +114,7 @@ func _refresh_combat_view(animate_health := true) -> void:
 	result_overlay.visible = state.phase in [CombatState.Phase.WON, CombatState.Phase.LOST]
 	if state.phase == CombatState.Phase.WON:
 		result_title.text = "VICTORY"
-		if RunState.is_final_encounter():
-			result_action_button.text = "Complete Run"
-		elif enemy.is_elite:
+		if RunState.is_pending_boss() or enemy.is_elite:
 			result_action_button.text = "Choose Relic"
 		else:
 			result_action_button.text = "Choose Card Reward"
@@ -270,15 +268,10 @@ func _on_end_turn_button_pressed() -> void:
 func _on_result_action_button_pressed() -> void:
 	if state.phase == CombatState.Phase.WON:
 		RunState.complete_combat(state.player_health)
-		if RunState.run_complete:
-			SceneTransition.transition_to("res://screens/run_complete.tscn")
-		elif RunState.awaiting_relic:
-			SceneTransition.transition_to("res://screens/relic_reward.tscn")
-		else:
-			SceneTransition.transition_to("res://screens/card_reward.tscn")
+		SceneTransition.transition_to(RunState.get_resume_scene())
 	elif state.phase == CombatState.Phase.LOST:
 		RunState.start_new_run()
-		_start_combat()
+		SceneTransition.transition_to("res://screens/map_screen.tscn")
 
 
 func _on_title_button_pressed() -> void:

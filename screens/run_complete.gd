@@ -7,7 +7,7 @@ const DECK_VIEWER_SCENE := preload("res://screens/deck_viewer.tscn")
 
 func _ready() -> void:
 	RunState.ensure_run_started()
-	summary_label.text = "You defeated all three encounters with %d health and a %d-card deck." % [
+	summary_label.text = "You conquered the map with %d health and a %d-card deck." % [
 		RunState.current_health,
 		RunState.deck.size(),
 	]
@@ -15,7 +15,7 @@ func _ready() -> void:
 
 func _on_new_run_button_pressed() -> void:
 	RunState.start_new_run()
-	SceneTransition.transition_to("res://combat/combat_screen.tscn")
+	SceneTransition.transition_to("res://screens/map_screen.tscn")
 
 
 func _on_title_button_pressed() -> void:

@@ -65,8 +65,13 @@ func _on_relic_chosen(relic: RelicData) -> void:
 
 
 func _on_continue_button_pressed() -> void:
-	if reward_chosen:
-		SceneTransition.transition_to("res://combat/combat_screen.tscn")
+	if not reward_chosen:
+		return
+	if RunState.is_current_node_boss():
+		RunState.clear_saved_run()
+		SceneTransition.transition_to("res://screens/run_complete.tscn")
+	else:
+		SceneTransition.transition_to("res://screens/map_screen.tscn")
 
 
 func _on_main_menu_button_pressed() -> void:
