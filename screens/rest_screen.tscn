@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://screens/rest_screen.gd" id="1"]
+
+[node name="RestScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.055, 0.071, 0.11, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Content" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Rest Site"
+horizontal_alignment = 1
+
+[node name="RestButton" type="Button" parent="Center/Content"]
+custom_minimum_size = Vector2(300, 54)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Rest — heal 30% HP"
+
+[node name="UpgradeButton" type="Button" parent="Center/Content"]
+custom_minimum_size = Vector2(300, 54)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "Upgrade a card"
+
+[connection signal="pressed" from="Center/Content/RestButton" to="." method="_on_rest_button_pressed"]
+[connection signal="pressed" from="Center/Content/UpgradeButton" to="." method="_on_upgrade_button_pressed"]
