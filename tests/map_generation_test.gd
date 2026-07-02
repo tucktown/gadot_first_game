@@ -149,6 +149,7 @@ func _test_serialization_round_trip() -> void:
 func _test_from_dict_rejects_malformed() -> void:
 	_expect(GameMap.from_dict({}) == null, "Empty dict is not a map.")
 	_expect(GameMap.from_dict({"nodes": []}) == null, "A map needs nodes.")
+	_expect(GameMap.from_dict({"nodes": "oops"}) == null, "Non-array nodes must be rejected.")
 	_expect(GameMap.from_dict({"nodes": [{"id": 0, "type": 99, "row": 0,
 		"column": 0, "edges": [], "enemy_id": ""}], "current_node_id": -1}) == null,
 		"An out-of-range node type must be rejected.")
