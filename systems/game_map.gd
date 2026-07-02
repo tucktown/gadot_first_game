@@ -127,3 +127,56 @@ func to_dict() -> Dictionary:
 			"enemy_id": String(node.enemy_id),
 		})
 	return {"current_node_id": current_node_id, "nodes": node_dicts}
+
+
+func get_available_node_ids() -> Array[int]:
+	var ids: Array[int] = []
+	if current_node_id == -1:
+		for node in nodes:
+			if node.row == 0:
+				ids.append(node.id)
+	else:
+		var current := get_node_by_id(current_node_id)
+		if current != null:
+			ids = current.edges.duplicate()
+	return ids
+
+
+func enter(id: int) -> bool:
+	if not get_available_node_ids().has(id):
+		return false
+	current_node_id = id
+	return true
+
+
+static func from_dict(data: Dictionary) -> GameMap:
+	if typeof(data) != TYPE_DICTIONARY:
+		return null
+	var raw_nodes: Variant = data.get("nodes", [])
+	if typeof(raw_nodes) != TYPE_ARRAY or raw_nodes.is_empty():
+		return null
+	var map := GameMap.new()
+	for raw in raw_nodes:
+		if typeof(raw) != TYPE_DICTIONARY:
+			return null
+		var node := MapNode.new()
+		node.id = int(raw.get("id", -1))
+		var type_value := int(raw.get("type", -1))
+		if type_value < 0 or type_value > int(MapNode.Type.BOSS):
+			return null
+		node.type = type_value as MapNode.Type
+		node.row = int(raw.get("row", 0))
+		node.column = int(raw.get("column", 0))
+		var raw_edges: Variant = raw.get("edges", [])
+		if typeof(raw_edges) != TYPE_ARRAY:
+			return null
+		var edges: Array[int] = []
+		for e in raw_edges:
+			edges.append(int(e))
+		node.edges = edges
+		node.enemy_id = StringName(str(raw.get("enemy_id", "")))
+		map.nodes.append(node)
+	map.current_node_id = int(data.get("current_node_id", -1))
+	if map.current_node_id != -1 and map.get_node_by_id(map.current_node_id) == null:
+		return null
+	return map

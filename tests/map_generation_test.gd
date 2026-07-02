@@ -19,6 +19,9 @@ func _run_tests() -> void:
 	_test_no_crossing_edges()
 	_test_enemy_ids_assigned()
 	_test_seed_is_deterministic()
+	_test_navigation()
+	_test_serialization_round_trip()
+	_test_from_dict_rejects_malformed()
 	if failures == 0:
 		print("Map generation tests passed.")
 	call_deferred("_finish")
@@ -119,6 +122,36 @@ func _test_enemy_ids_assigned() -> void:
 
 func _test_seed_is_deterministic() -> void:
 	_expect(_map(42).to_dict() == _map(42).to_dict(), "Same seed must produce the same map.")
+
+
+func _test_navigation() -> void:
+	var map := _map()
+	var start := map.get_available_node_ids()
+	_expect(not start.is_empty(), "Start options should be the row-0 nodes.")
+	for id in start:
+		_expect(map.get_node_by_id(id).row == 0, "Start options must be on row 0.")
+	var first: int = start[0]
+	_expect(map.enter(first), "Entering an available node should succeed.")
+	_expect(map.current_node_id == first, "Entering sets the current node.")
+	_expect(map.get_available_node_ids() == map.get_node_by_id(first).edges,
+		"After entering, options are that node's edges.")
+	_expect(not map.enter(9999), "Entering an unreachable node must fail.")
+
+
+func _test_serialization_round_trip() -> void:
+	var map := _map(7)
+	map.enter(map.get_available_node_ids()[0])
+	var restored := GameMap.from_dict(map.to_dict())
+	_expect(restored != null, "from_dict should rebuild a valid map.")
+	_expect(restored.to_dict() == map.to_dict(), "Round-trip must preserve the map.")
+
+
+func _test_from_dict_rejects_malformed() -> void:
+	_expect(GameMap.from_dict({}) == null, "Empty dict is not a map.")
+	_expect(GameMap.from_dict({"nodes": []}) == null, "A map needs nodes.")
+	_expect(GameMap.from_dict({"nodes": [{"id": 0, "type": 99, "row": 0,
+		"column": 0, "edges": [], "enemy_id": ""}], "current_node_id": -1}) == null,
+		"An out-of-range node type must be rejected.")
 
 
 func _expect(condition: bool, message: String) -> void:
