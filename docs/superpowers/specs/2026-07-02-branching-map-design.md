@@ -117,9 +117,26 @@ Title → start run → GENERATE MAP → [Map screen]
 ```
 
 **Presentation (functional, not art-heavy):** nodes positioned by row (y) and column (x),
-a `Button` per node (type icon/letter) with `Line2D` edges between connected nodes.
+a `Button` per node with `Line2D` edges between connected nodes.
+
+**Each node must clearly read as its type** without the player guessing — via three
+redundant cues (no asset generation; built-in font glyph + themed color):
+
+| Type    | Glyph | Color  | Tooltip |
+|---------|-------|--------|---------|
+| `COMBAT`| ⚔     | red    | "Combat — <enemy name>" |
+| `ELITE` | ☠     | purple | "Elite — <enemy name>" |
+| `REST`  | ✚     | green  | "Rest — heal 30% HP" |
+| `BOSS`  | ♛     | gold   | "Boss — <enemy name>" |
+
+Cue 1 = glyph on the button, cue 2 = the button's color (themed `StyleBox`), cue 3 = a
+hover tooltip naming the type (and the enemy for fights). A small always-visible **legend**
+(glyph → meaning) sits in a map-screen corner. Tooltips reuse the relic-bar pattern
+(`mouse_filter = STOP` so hovers register — the milestone-3 gotcha).
+
 Reachable nodes (`get_available_node_ids()`) are enabled + glow; unreachable are
-disabled/greyed. Clicking a reachable node calls into `RunState` to enter it and route:
+disabled/greyed (dimmed, but glyph/color still legible so the player can plan a route
+ahead). Clicking a reachable node calls into `RunState` to enter it and route:
 - `COMBAT`/`ELITE`/`BOSS` → set current node, transition to `combat_screen` (combat reads
   the current node's enemy).
 - `REST` → heal, save, reload the map screen.
